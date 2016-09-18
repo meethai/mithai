@@ -28,6 +28,7 @@ public class Client {
         for (int j = 0; j < 10; j++) {
             for (int i = 0; i < devices.size(); i++) {
                 System.out.println(devices.get(i).getId() + ": " + devices.get(i).sense());
+                devices.get(i).sendData();
             }
             Thread.sleep(1000);
         }
