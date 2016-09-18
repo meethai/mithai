@@ -18,6 +18,11 @@ compileJava {
     targetCompatibility = '1.8'
 }
 
+sourceSets.main.scala.srcDir "src/main/java"
+sourceSets.main.java.srcDirs = []
+sourceSets.test.scala.srcDir "src/test/java"
+sourceSets.test.java.srcDirs = []
+
 repositories {
     jcenter()
     mavenCentral()
@@ -28,15 +33,47 @@ task initSourceFolders { // add << before { to prevent executing during configur
     sourceSets*.resources.srcDirs*.each { it.mkdirs() }
 }
 
+task runSparkServer(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.reciever.NetworkWordCount'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [sparkHost, sparkPort]
+}
+
+task runMqttPublisher(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.mqtt.MQTTPublisher'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [mosquitoURL, mosquitoTopic]
+}
+
+task runMqttReciever(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.mqtt.MQTTReciever'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [mosquitoURL, mosquitoTopic]
+}
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.12'
-    compile 'org.scala-lang:scala-library:2.11.1'
+    compile 'org.scala-lang:scala-library:2.11.8'
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
+    compile 'com.sparkjava:spark-core:2.3'
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-streaming_2.11
+    compile group: 'org.apache.spark', name: 'spark-streaming_2.11', version: '1.6.0'
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-mqtt_2.10
+    compile group: 'org.apache.spark', name: 'spark-streaming-mqtt_2.10', version: '1.6.2'
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    compile group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.1.0'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+
+
 }
 
