@@ -18,6 +18,11 @@ compileJava {
     targetCompatibility = '1.8'
 }
 
+sourceSets.main.scala.srcDir "src/main/java"
+sourceSets.main.java.srcDirs = []
+sourceSets.test.scala.srcDir "src/test/java"
+sourceSets.test.java.srcDirs = []
+
 repositories {
     jcenter()
     mavenCentral()
@@ -26,6 +31,27 @@ repositories {
 task initSourceFolders { // add << before { to prevent executing during configuration phase
     sourceSets*.java.srcDirs*.each { it.mkdirs() }
     sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+}
+
+task runSparkServer(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.reciever.NetworkWordCount'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [sparkHost, sparkPort]
+}
+
+task runMqttPublisher(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.mqtt.MQTTPublisher'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [mosquitoURL, mosquitoTopic]
+}
+
+task runMqttReciever(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.mqtt.MQTTReciever'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+    args = [mosquitoURL, mosquitoTopic]
 }
 
 // In this section you declare the dependencies for your production and test code
@@ -41,6 +67,13 @@ dependencies {
     compile 'com.sparkjava:spark-core:2.3'
     // https://mvnrepository.com/artifact/org.apache.spark/spark-streaming_2.11
     compile group: 'org.apache.spark', name: 'spark-streaming_2.11', version: '1.6.0'
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-streaming-mqtt_2.10
+    compile group: 'org.apache.spark', name: 'spark-streaming-mqtt_2.10', version: '1.6.2'
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    compile group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.1.0'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+
 
 }
 
