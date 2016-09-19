@@ -84,9 +84,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
     compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.8.2.1'
 
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
-
 }
 
 idea {
