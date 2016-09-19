@@ -1,12 +1,6 @@
-package edu.sjsu.mithai.kafka;
+package edu.sjsu.mithai.export.kafka;
 
-/**
- * Created by sushained on 9/17/16.
- */
-
-import java.util.*;
-import java.util.concurrent.Future;
-
+import edu.sjsu.mithai.export.IExporter;
 import edu.sjsu.mithai.kafka.util.JsonHelper;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import org.apache.kafka.clients.producer.Callback;
@@ -14,16 +8,20 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-public class Producer {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
+/**
+ * Created by sjinturkar on 9/18/16.
+ */
+public class KafkaExporter implements IExporter {
     private static KafkaProducer<String, String> producer;
     private static String topic = "temp";
 
-    public Producer() {
-
-    }
-
-    public static void main(String[] args) {
+    @Override
+    public void setup() {
         Properties props = new Properties();
         props.put("bootstrap.servers", "52.42.54.243:9092");
         props.put("key.serializer",
@@ -32,7 +30,10 @@ public class Producer {
                 "org.apache.kafka.common.serialization.StringSerializer");
         props.put("request.required.acks", "1");
         producer = new KafkaProducer<String, String>(props);
+    }
 
+    @Override
+    public void send() {
         TemperatureSensor temperatureSensor = new TemperatureSensor("Sensor1");
 
         Double temperature = temperatureSensor.sense();
@@ -62,6 +63,10 @@ public class Producer {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    @Override
+    public void tearDown() {
         producer.close();
     }
 }
