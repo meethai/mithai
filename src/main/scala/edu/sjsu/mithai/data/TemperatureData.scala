@@ -2,23 +2,29 @@ package edu.sjsu.mithai.data
 
 import java.util
 
+import com.google.gson.annotations.Expose
+
 /**
   * Created by kaustubh on 9/17/16.
   */
-class TemperatureData(temp: String = "-273", scale: String = "kelvin") extends AbstractData {
-  var hm = new util.HashMap[String, String]()
-  hm.put("temp", temp)
-  hm.put("scale", scale)
+class TemperatureData(id:String = "id",temp: String = "-273", scale: String = "kelvin") extends AbstractData {
 
-  def updateTemp(temp: String) = {
-    hm.put("temp", temp)
-  }
+  val ID = "id"
+
+  val TEMP = "temp"
+
+  val SCALE = "scale"
+
+  @Expose
+  var tempValues = new util.HashMap[String, String]()
+
+  tempValues.put(TEMP, temp)
+  tempValues.put(SCALE, scale)
+  tempValues.put(ID,id)
+
+  def updateTemp(temp: String) = tempValues.put(TEMP, temp)
+
+  def setId(id:String) = tempValues.put(ID,id)
+
+  def setScale(scale:String) = tempValues.put(SCALE,scale)
 }
-
-//object TemperatureData{
-//  def main(args: Array[String]) {
-//    val td = new TemperatureData()
-////    td.updateTemp("10.3")
-//    println(new String(td.getJsonBytes(),"utf-8"))
-//  }
-//}
