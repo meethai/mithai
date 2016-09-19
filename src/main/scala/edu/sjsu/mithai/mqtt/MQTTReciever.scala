@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.mqtt
 
+import java.util
 import org.apache.spark.SparkConf
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.mqtt.MQTTUtils
@@ -19,16 +20,30 @@ object MQTTReciever {
     }
 
     val Seq(brokerUrl, topic) = args.toSeq
-    val sparkConf = new SparkConf().setAppName("MQTTWordCount").setMaster("local[2]")
+    val sparkConf = new SparkConf()
+      .setAppName("MQTTWordCount")
+      .setMaster("local[2]")
     val ssc = new StreamingContext(sparkConf, Seconds(2))
     val lines = MQTTUtils.createStream(ssc, brokerUrl, topic, StorageLevel.MEMORY_ONLY_SER_2)
 
     val words = lines.flatMap(x => x.split(" "))
-    print(words)
-    val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
+    words.foreachRDD(rdd => {
+      var hm = new util.ArrayList[String]()
+      for(item <- rdd.collect()) {
+        val a = item.split("-!-")
+        val data:String = a{1}
+        hm.add(data)
+      }
 
-    wordCounts.print()
+      //TODO call madhuras func here
+      for(x<-hm){
+        println("\t\t"+x)
+      }
+
+    })
+
     ssc.start()
     ssc.awaitTermination()
   }
+
 }

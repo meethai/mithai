@@ -23,6 +23,6 @@ public abstract class AbstractDevice implements IDevice {
     }
 
     public void sendData() {
-        publisher.publish(new TemperatureData(Double.toString(sense()), "k"));
+        publisher.publish(new TemperatureData(id,Double.toString(sense()),"kelvin"));
     }
 }
