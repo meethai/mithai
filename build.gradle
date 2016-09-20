@@ -24,7 +24,6 @@ sourceSets.test.scala.srcDir "src/test/java"
 sourceSets.test.java.srcDirs = []
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -76,6 +75,47 @@ dependencies {
     compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.7.3'
     // https://mvnrepository.com/artifact/org.apache.spark/spark-graphx_2.10
     // compile group: 'org.apache.spark', name: 'spark-graphx_2.10', version: '2.0.0' - dependency added to lib for fixing compiliation with scala 11.8
+    // https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.10
+    // https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.10
+    compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.10.0.1'
+    // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.8.2.1'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.5'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
 
 }
 
+idea {
+
+    //if you want parts of paths in resulting files (*.iml, etc.) to be replaced by variables (Files)
+    pathVariables GRADLE_HOME: file('~/cool-software/gradle')
+
+    module {
+        //if for some reason you want to add an extra sourceDirs
+//        sourceDirs += file('some-extra-source-folder')
+        //and some extra test source dirs
+//        testSourceDirs += file('some-extra-test-dir')
+        //and hint to mark some of existing source dirs as generated sources
+//        generatedSourceDirs += file('some-extra-source-folder')
+        //and some extra dirs that should be excluded by IDEA
+//        excludeDirs += file('some-extra-exclude-dir')
+        //if you don't like the name Gradle has chosen
+//        name = 'some-better-name'
+        //if you prefer different output folders
+//        inheritOutputDirs = false
+//        outputDir = file('muchBetterOutputDir')
+//        testOutputDir = file('muchBetterTestOutputDir')
+        //if you prefer different SDK than the one inherited from IDEA project
+//        jdkName = '1.6'
+        //if you need to put 'provided' dependencies on the classpath
+//        scopes.PROVIDED.plus += [ configurations.provided ]
+        //if 'content root' (as IDEA calls it) of the module is different
+//        contentRoot = file('my-module-content-root')
+        //if you love browsing Javadoc
+        downloadJavadoc = true
+        //and hate reading sources :)
+        downloadSources = true
+    }
+}
