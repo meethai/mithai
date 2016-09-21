@@ -53,6 +53,12 @@ task runMqttReciever(type: JavaExec, dependsOn: classes) {
     args = [mosquitoURL, mosquitoTopic]
 }
 
+task runGraphCreator(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.graphX.GraphCreator'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
