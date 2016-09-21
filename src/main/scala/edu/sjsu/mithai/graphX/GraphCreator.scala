@@ -9,12 +9,12 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 
-object TempratureRDD {
+object GraphCreator {
 
   def main(args: Array[String]) {
 
     val conf = new SparkConf()
-      .setAppName("TempratureRDD")
+      .setAppName("GraphCreator")
       .setMaster("local[2]")
 
     val sc = new SparkContext(conf)
@@ -38,10 +38,6 @@ object TempratureRDD {
       Edge(5L, 3L, 8),
       Edge(5L, 6L, 3)
     )
-
-
-
-
     val vertexRDD: RDD[(Long, (String, Int))] = sc.parallelize(vertexArray)
     val edgeRDD: RDD[Edge[Int]] = sc.parallelize(edgeArray)
 
@@ -52,8 +48,4 @@ object TempratureRDD {
     }
 
   }
-}
-
-class TempratureRDD {
-
 }
