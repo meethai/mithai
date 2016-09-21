@@ -1,7 +1,7 @@
 package edu.sjsu.mithai.export.http;
 
+import com.google.gson.Gson;
 import edu.sjsu.mithai.export.IExporter;
-import edu.sjsu.mithai.kafka.util.JsonHelper;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -13,16 +13,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by sjinturkar on 9/19/16.
- */
 public class HttpExporter implements IExporter {
 
-    CloseableHttpClient client;
+    private CloseableHttpClient client;
+    private Gson gson;
 
     @Override
     public void setup() throws Exception {
-        client = HttpClients.createDefault();
+        this.client = HttpClients.createDefault();
+        this.gson = new Gson();
     }
 
     @Override
@@ -31,7 +30,7 @@ public class HttpExporter implements IExporter {
         Double temperature = temperatureSensor.sense();
         Map<String, Double> map = new HashMap<>();
         map.put(temperatureSensor.getId(), temperature);
-        String msg = JsonHelper.getInstance().toJson(map);
+        String msg = gson.toJson(map);
 
         System.out.println("Sending message: " + msg);
         HttpPost post = new HttpPost("https://httpbin.org/post");
@@ -44,6 +43,6 @@ public class HttpExporter implements IExporter {
 
     @Override
     public void tearDown() throws IOException {
-client.close();
+        client.close();
     }
 }
