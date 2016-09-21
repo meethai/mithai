@@ -1,7 +1,7 @@
 package edu.sjsu.mithai.publisher
 
 import edu.sjsu.mithai.PropertiesValues
-import edu.sjsu.mithai.data.{SerialisableData, AbstractData}
+import edu.sjsu.mithai.data.{Streamable, AbstractData}
 import edu.sjsu.mithai.mqtt.MQTTPublisher
 
 /**
@@ -11,7 +11,7 @@ class Publisher {
   private val mqttPublisher = new MQTTPublisher(PropertiesValues.mqttBrokerUrl)
   private val topic = PropertiesValues.mqttTopic
 
-  def publish(data: SerialisableData) =
+  def publish(data: Streamable) =
     mqttPublisher.sendDataToTopic(data, topic)
 
 }
