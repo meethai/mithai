@@ -1,7 +1,6 @@
 package edu.sjsu.mithai.mqtt
 
 import java.util
-
 import org.apache.spark.SparkConf
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.mqtt.MQTTUtils
@@ -46,5 +45,4 @@ object MQTTReciever {
     ssc.start()
     ssc.awaitTermination()
   }
-
 }
