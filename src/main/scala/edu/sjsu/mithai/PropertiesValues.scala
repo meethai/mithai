@@ -5,7 +5,7 @@ package edu.sjsu.mithai
   */
 object PropertiesValues {
   //TODO Read brokerURL from properties file
-  val mqttBrokerUrl = "tcp://localhost:1883"
+  val mqttBrokerUrl = "tcp://52.42.54.243:1883"
   val mqttTopic = "topic"
 
 }
