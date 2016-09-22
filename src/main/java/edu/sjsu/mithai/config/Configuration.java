@@ -38,5 +38,11 @@ public class Configuration {
     public String getPropertyFile() {
         return propertyFile;
     }
+
+    public void reload() throws IOException {
+        properties.clear();
+        properties.load(new FileReader(propertyFile));
+        System.out.println("=>" + properties);
+    }
 }
 
