@@ -18,7 +18,7 @@
 package edu.sjsu.mithai.default_example
 
 //import com.sun.javafx.Logging
-import com.sun.javafx.util.Logging
+import org.apache.spark.internal.Logging
 import org.apache.log4j.{Level, Logger}
 
 //import org.apache.spark.Logging
