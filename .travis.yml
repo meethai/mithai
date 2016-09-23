@@ -1,2 +1,7 @@
 
+
+Language: Scala
+
+Scala : 2.11.0
+
 Script: gradle check
