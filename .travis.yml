@@ -1,4 +1,3 @@
 
 
 
-script: gradle build --continue
