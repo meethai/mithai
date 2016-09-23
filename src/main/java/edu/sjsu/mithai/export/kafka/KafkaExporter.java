@@ -14,14 +14,20 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 
 public class KafkaExporter implements IExporter {
-    private static KafkaProducer<String, String> producer;
-    private static String topic = "temp";
+    private KafkaProducer<String, String> producer;
+    private String topic;
+    private final String servers;
     private Gson gson;
+
+    public KafkaExporter(String topic, String servers) {
+        this.topic = topic;
+        this.servers = servers;
+    }
 
     @Override
     public void setup() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "52.42.54.243:9092");
+        props.put("bootstrap.servers", servers);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("request.required.acks", "1");

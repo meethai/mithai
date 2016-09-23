@@ -1,33 +1,18 @@
 package edu.sjsu.mithai.export;
 
-/**
- * Created by sjinturkar on 9/19/16.
- */
+import edu.sjsu.mithai.config.Configuration;
+import edu.sjsu.mithai.util.TaskManager;
+
 public class Client {
-    public static void main(String [] args) {
+    public static void main(String[] args) {
+        Client c = new Client();
+        c.run();
+    }
+
+    private void run() {
         try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Exporter e = new Exporter("KAFKA");
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }).start();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Exporter e = new Exporter("HTTP");
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }).start();
-
+            Configuration configuration = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
+            TaskManager.getInstance().submitTask(new ExporterTask(configuration));
         } catch (Exception e) {
             e.printStackTrace();
         }

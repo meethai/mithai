@@ -13,5 +13,7 @@ public interface MithaiProperties {
     // EXPORTER PROPERTIES
     static String EXPORTER_TYPE = "EXPORTER_TYPE";
     static String EXPORTER_REMOTE_URI = "EXPORTER_REMOTE_IP";
+    static String EXPORTER_KAFKA_TOPIC = "EXPORTER_KAFKA_TOPIC";
+    static String EXPORTER_TIME_INTERVAL = "EXPORTER_TIME_INTERVAL";
 
 }

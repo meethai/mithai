@@ -21,6 +21,11 @@ public class TaskManager {
         this.tasks = new ArrayList<>();
     }
 
+    public void submitTask(StoppableExecutableTask task) {
+        threadPool.submit(task);
+        tasks.add(task);
+    }
+
     public void submitTask(StoppableRunnableTask task) {
         threadPool.submit(task);
         tasks.add(task);
