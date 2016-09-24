@@ -38,6 +38,17 @@ class MQTTPublisher(brokerUrl: String) {
     }
   }
 
+  def sendDataToTopic(data: String, topic: String): Unit = {
+    client.connect();
+    val msgTopic = client.getTopic(topic)
+    val message = new MqttMessage(data.getBytes())
+
+    println("Sending message: " + data)
+    msgTopic.publish(message)
+
+    client.disconnect()
+  }
+
   def sendDataToTopic(aData: Seq[Streamable], topic: String): Unit = {
     try {
       client.connect()
