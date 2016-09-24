@@ -1,2 +1,16 @@
 
-script: gradle check
+language: scala
+scala :
+    - 2.11.8
+
+language: java
+java:
+    - oraclejdk8
+
+
+install: true
+
+script:
+    - "gradle clean"
+    - "gradle build"
+
