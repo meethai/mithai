@@ -1,20 +1,20 @@
-package client;
+package edu.sjsu.mithai.mqtt;
 
 import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.mqtt.MQTTReceiverTask;
 import edu.sjsu.mithai.util.TaskManager;
+import org.junit.Test;
 
 import java.io.IOException;
 
 /**
- * Created by kaustubh on 9/16/16.
+ * Created by kaustubh on 9/21/16.
  */
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Project Mithai...");
+public class MQTTReceiverTaskTest {
+    @Test
+    public void MQTTTest() {
 
         try {
-            Configuration config = new Configuration(Main.class.getClassLoader().getResource("application.properties").getFile());
+            Configuration config = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
             TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,5 +31,6 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 }

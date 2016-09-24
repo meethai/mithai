@@ -1,11 +1,6 @@
 package edu.sjsu.mithai.util;
 
-import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.export.ExporterFactory;
-import edu.sjsu.mithai.export.IExporter;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
-
-import java.io.IOException;
 
 public class Client {
 

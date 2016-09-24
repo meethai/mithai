@@ -14,9 +14,9 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 
 public class KafkaExporter implements IExporter {
+    private final String servers;
     private KafkaProducer<String, String> producer;
     private String topic;
-    private final String servers;
     private Gson gson;
 
     public KafkaExporter(String topic, String servers) {
