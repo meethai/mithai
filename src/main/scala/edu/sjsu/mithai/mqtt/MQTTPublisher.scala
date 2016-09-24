@@ -1,8 +1,9 @@
 package edu.sjsu.mithai.mqtt
 
-import edu.sjsu.mithai.data.{Streamable, AbstractData, TemperatureData}
-import org.eclipse.paho.client.mqttv3.{MqttException, MqttMessage, MqttClient}
+import edu.sjsu.mithai.data.Streamable
+import org.apache.log4j.Logger
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage}
 
 
 /**
@@ -10,13 +11,13 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
   */
 
 class MQTTPublisher(brokerUrl: String) {
-
+  val logger: Logger = Logger.getLogger(this.getClass)
   val persistence = new MemoryPersistence()
   var client: MqttClient = null
   var topic: String = null
   client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
 
-  def sendDataToTopic(aData: Streamable, topic: String) = {
+  def sendDataToTopic(aData: Streamable, topic: String): Unit = {
     try {
 
       client.connect()
@@ -24,11 +25,10 @@ class MQTTPublisher(brokerUrl: String) {
       val message = new MqttMessage(aData.getJsonBytes())
       msgtopic.publish(message)
 
-
     }
     catch {
       case e: MqttException if e.getReasonCode == MqttException.REASON_CODE_MAX_INFLIGHT =>
-        println("Queue is full, wait for to consume data from the message queue")
+        logger.error("Queue is full, wait for to consume data from the message queue", e)
       case e: MqttException => println("Exception Caught: " + e)
     }
     finally {
@@ -38,49 +38,22 @@ class MQTTPublisher(brokerUrl: String) {
     }
   }
 
-  object MQTTPublisher {
-    def main(args: Array[String]) {
-      if (args.length < 2) {
-        System.err.println("Usage: MQTTPublisher <MqttBrokerUrl> <topic>")
-        System.exit(1)
-      }
-
-      val Seq(brokerUrl, topic) = args.toSeq
-
-      var client: MqttClient = null
-
-      try {
-        val persistence = new MemoryPersistence()
-        client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
-
-        client.connect()
-
-        val msgtopic = client.getTopic(topic)
-        val msgContent = "hello mqtt demo for spark streaming"
-        //      val message = new MqttMessage(msgContent.getBytes("utf-8"))
-        var abstractData: AbstractData = null
-        abstractData = new TemperatureData()
-        var message = new MqttMessage(abstractData.getJsonBytes())
-
-        while (true) {
-          try {
-            msgtopic.publish(message)
-            println("Published data. topic: ${msgtopic.getName()}; Message: $message")
-          } catch {
-            case e: MqttException if e.getReasonCode == MqttException.REASON_CODE_MAX_INFLIGHT =>
-              Thread.sleep(1000)
-              println("Queue is full, wait for to consume data from the message queue")
-          }
-        }
-      } catch {
-        case e: MqttException => println("Exception Caught: " + e)
-      } finally {
-        if (client != null) {
-          client.disconnect()
-        }
+  def sendDataToTopic(aData: Seq[Streamable], topic: String): Unit = {
+    try {
+      client.connect()
+      val msgtopic = client.getTopic(topic)
+      aData.foreach(data => msgtopic.publish(new MqttMessage(data.getJsonBytes())))
+    }
+    catch {
+      case e: MqttException if e.getReasonCode == MqttException.REASON_CODE_MAX_INFLIGHT =>
+        logger.error("Queue is full, wait for to consume data from the message queue", e)
+      case e: MqttException => logger.error("Exception Caught: ", e)
+    }
+    finally {
+      if (client != null) {
+        client.disconnect()
       }
     }
-
   }
 
 
