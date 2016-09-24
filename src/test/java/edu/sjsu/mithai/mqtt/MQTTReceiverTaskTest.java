@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by kaustubh on 9/21/16.
  */
@@ -16,7 +14,7 @@ public class MQTTReceiverTaskTest {
     public void MQTTTest() {
 
         try {
-            Configuration config = new Configuration("/Users/kaustubh/295B/mithai/src/main/resources/application.properties");
+            Configuration config = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
             TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
         } catch (IOException e) {
             e.printStackTrace();

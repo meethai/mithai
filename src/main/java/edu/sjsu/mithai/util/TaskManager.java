@@ -12,13 +12,13 @@ public class TaskManager {
     private List<Stoppable> tasks;
     private ExecutorService threadPool;
 
-    public static TaskManager getInstance() {
-        return ourInstance;
-    }
-
     private TaskManager() {
         this.threadPool = Executors.newCachedThreadPool();
         this.tasks = new ArrayList<>();
+    }
+
+    public static TaskManager getInstance() {
+        return ourInstance;
     }
 
     public void submitTask(StoppableExecutableTask task) {

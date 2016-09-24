@@ -14,7 +14,7 @@ public class Main {
         System.out.println("Project Mithai...");
 
         try {
-            Configuration config = new Configuration("/Users/kaustubh/295B/mithai/src/main/resources/application.properties");
+            Configuration config = new Configuration(Main.class.getClassLoader().getResource("application.properties").getFile());
             TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
         } catch (IOException e) {
             e.printStackTrace();

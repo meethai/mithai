@@ -24,11 +24,6 @@ public class MQTTReceiverTask extends StoppableRunnableTask {
     }
 
     @Override
-    public void execute() {
-        // Do nothing
-    }
-
-    @Override
     public void stop() {
         logger.debug("stopping...");
         reciever.ssc().stop(true, true);

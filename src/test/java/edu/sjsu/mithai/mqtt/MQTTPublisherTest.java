@@ -14,11 +14,11 @@ import java.io.IOException;
 public class MQTTPublisherTest {
 
     @Test
-    public void test(String[] args) {
+    public void test() {
 
         Configuration config = null;
         try {
-            config = new Configuration("/Users/kaustubh/295B/mithai/src/main/resources/application.properties");
+            config = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
         } catch (IOException e) {
             e.printStackTrace();
         }
