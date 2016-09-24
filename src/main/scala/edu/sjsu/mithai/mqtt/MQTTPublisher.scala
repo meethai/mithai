@@ -1,6 +1,6 @@
 package edu.sjsu.mithai.mqtt
 
-import edu.sjsu.mithai.data.{SerialisableData, AbstractData, TemperatureData}
+import edu.sjsu.mithai.data.{Streamable, AbstractData, TemperatureData}
 import org.eclipse.paho.client.mqttv3.{MqttException, MqttMessage, MqttClient}
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 
@@ -16,13 +16,14 @@ class MQTTPublisher(brokerUrl: String) {
   var topic: String = null
   client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
 
-  def sendDataToTopic(aData: SerialisableData, topic: String) = {
+  def sendDataToTopic(aData: Streamable, topic: String) = {
     try {
 
       client.connect()
       val msgtopic = client.getTopic(topic)
       val message = new MqttMessage(aData.getJsonBytes())
       msgtopic.publish(message)
+
 
     }
     catch {

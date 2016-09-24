@@ -1,38 +1,36 @@
-package edu.sjsu.mithai.kafka;
+package edu.sjsu.mithai.export.kafka;
 
-/**
- * Created by sushained on 9/17/16.
- */
-
-import java.util.*;
-import java.util.concurrent.Future;
-
-import edu.sjsu.mithai.kafka.util.JsonHelper;
+import com.google.gson.Gson;
+import edu.sjsu.mithai.export.IExporter;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-public class Producer {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
+public class KafkaExporter implements IExporter {
     private static KafkaProducer<String, String> producer;
     private static String topic = "temp";
+    private Gson gson;
 
-    public Producer() {
-
-    }
-
-    public static void main(String[] args) {
+    @Override
+    public void setup() {
         Properties props = new Properties();
         props.put("bootstrap.servers", "52.42.54.243:9092");
-        props.put("key.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("request.required.acks", "1");
         producer = new KafkaProducer<String, String>(props);
+        gson = new Gson();
+    }
 
+    @Override
+    public void send() {
         TemperatureSensor temperatureSensor = new TemperatureSensor("Sensor1");
 
         Double temperature = temperatureSensor.sense();
@@ -40,28 +38,28 @@ public class Producer {
         Map<String, Double> map = new HashMap<>();
         map.put(temperatureSensor.getId(), temperature);
 
-        String msg = JsonHelper.getInstance().toJson(map);
-        ProducerRecord<String, String> data = new ProducerRecord<String, String>(
-                topic, "1", msg);
+        String msg = gson.toJson(map);
+        ProducerRecord<String, String> data = new ProducerRecord<String, String>(topic, "1", msg);
         Future<RecordMetadata> rs = producer.send(data,
-
                 new Callback() {
 
                     @Override
-                    public void onCompletion(RecordMetadata recordMetadata,
-                                             Exception arg1) {
+                    public void onCompletion(RecordMetadata recordMetadata, Exception arg1) {
                         System.out.println("Record stored successfully!");
                     }
                 });
-
         try {
             RecordMetadata rm = rs.get();
             msg = msg + " partition = " + rm.partition() + " offset ="
                     + rm.offset();
             System.out.println(msg);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void tearDown() {
         producer.close();
     }
 }
