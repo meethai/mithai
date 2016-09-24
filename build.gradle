@@ -54,6 +54,13 @@ task runMqttReciever(type: JavaExec, dependsOn: classes) {
     args = [mosquitoURL, mosquitoTopic]
 }
 
+task runMqttClient(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.sensors.Client'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+//    args = [mosquitoURL, mosquitoTopic]
+}
+
 buildscript {
     repositories {
         maven {

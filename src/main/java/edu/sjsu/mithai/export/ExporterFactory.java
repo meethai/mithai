@@ -1,14 +1,17 @@
 package edu.sjsu.mithai.export;
 
+import edu.sjsu.mithai.config.Configuration;
+import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.export.http.HttpExporter;
 import edu.sjsu.mithai.export.kafka.KafkaExporter;
 
-/**
- * Created by sjinturkar on 9/18/16.
- */
+import static edu.sjsu.mithai.config.MithaiProperties.EXPORTER_KAFKA_TOPIC;
+import static edu.sjsu.mithai.config.MithaiProperties.EXPORTER_REMOTE_URI;
+
 public class ExporterFactory {
 
-    public static IExporter getExporter(String type) {
+    public static IExporter getExporter(Configuration configuration) {
+        String type = configuration.getProperty(MithaiProperties.EXPORTER_TYPE);
 
         if (type == null) {
             return null;
@@ -16,9 +19,11 @@ public class ExporterFactory {
 
         switch (type) {
             case "KAFKA":
-                return new KafkaExporter();
+                return new KafkaExporter(configuration.getProperty(EXPORTER_KAFKA_TOPIC),
+                        configuration.getProperty(EXPORTER_REMOTE_URI));
+
             case "HTTP":
-                return new HttpExporter();
+                return new HttpExporter(configuration.getProperty(EXPORTER_REMOTE_URI));
 
             default:
                 return null;
