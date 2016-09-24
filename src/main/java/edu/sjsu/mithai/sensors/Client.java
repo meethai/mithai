@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class Client {
 
-    public static final int TEMPERATURE_SENSORS = 1;
+    public static final int TEMPERATURE_SENSORS = 3;
     public static final int FAULTY_TEMPERATURE_SENSORS = 0;
 
     public static void main(String[] args) throws InterruptedException {
