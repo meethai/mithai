@@ -7,8 +7,14 @@ import java.io.IOException;
 public class ConfigurationTest {
 
     public static void main(String[] args) {
+        ConfigurationTest test = new ConfigurationTest();
+        test.test();
+    }
+
+    private void test() {
+
         try {
-            Configuration c = new Configuration("/Users/sjinturkar/workspace/spstest/sc-web-test/src/main/mithai/src/main/resources/application.properties");
+            Configuration c = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
             System.out.println(c.getProperties());
 
             // start monitor task
@@ -18,4 +24,5 @@ public class ConfigurationTest {
         }
 
     }
+
 }

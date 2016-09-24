@@ -17,6 +17,11 @@ public class HttpExporter implements IExporter {
 
     private CloseableHttpClient client;
     private Gson gson;
+    private String uri;
+
+    public HttpExporter(String uri) {
+        this.uri = uri;
+    }
 
     @Override
     public void setup() throws Exception {
@@ -33,12 +38,12 @@ public class HttpExporter implements IExporter {
         String msg = gson.toJson(map);
 
         System.out.println("Sending message: " + msg);
-        HttpPost post = new HttpPost("https://httpbin.org/post");
+
+        HttpPost post = new HttpPost(uri);
         post.setEntity(new ByteArrayEntity(msg.getBytes()));
         CloseableHttpResponse response = client.execute(post);
 
         System.out.println(response.getStatusLine());
-
     }
 
     @Override
