@@ -2,11 +2,11 @@
 language: scala
 scala :
     - 2.11.8
-
-language: java
-java:
-    - oraclejdk8
-
+#
+#language: java
+#java:
+#    - oraclejdk8
+#
 
 install: true
 
