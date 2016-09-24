@@ -1,6 +1,6 @@
 package edu.sjsu.mithai.config;
 
-import edu.sjsu.mithai.util.StoppableRunnableTask;
+import edu.sjsu.mithai.util.StoppableExecutableTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
  * <p>
  * TODO: Propagate exceptions correctly
  */
-public class ConfigMonitorTask extends StoppableRunnableTask {
+public class ConfigMonitorTask extends StoppableExecutableTask {
 
     private static final int CHECKING_INTERVAL = 10000;
 

@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.util;
 
+import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.export.ExporterFactory;
 import edu.sjsu.mithai.export.IExporter;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
@@ -13,9 +14,9 @@ public class Client {
             TaskManager.getInstance().submitTask(new TemperatureSensorTask(i));
         }
 
-        for (int i = 0; i < 5; i++) {
-            TaskManager.getInstance().submitTask(new KafkaExporterTask("KAFKA"));
-        }
+//        for (int i = 0; i < 5; i++) {
+//            TaskManager.getInstance().submitTask(new KafkaExporterTask("KAFKA"));
+//        }
 
         try {
             Thread.sleep(31000);
@@ -31,7 +32,7 @@ public class Client {
         }
     }
 
-    static class TemperatureSensorTask extends StoppableRunnableTask {
+    static class TemperatureSensorTask extends StoppableExecutableTask {
 
         TemperatureSensor sensor;
 
@@ -50,37 +51,39 @@ public class Client {
         }
     }
 
-    static class KafkaExporterTask extends StoppableRunnableTask {
-
-        IExporter exporter;
-
-        public KafkaExporterTask(String type) {
-            exporter = ExporterFactory.getExporter(type);
-            try {
-                exporter.setup();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void execute() {
-            try {
-                exporter.send();
-                Thread.sleep(15000);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        @Override
-        public void stop() {
-            super.stop();
-            try {
-                exporter.tearDown();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    static class KafkaExporterTask extends StoppableExecutableTask {
+//
+//        IExporter exporter;
+//        Configuration configuration;
+//
+//        public KafkaExporterTask(String type) throws IOException {
+//
+//            exporter = ExporterFactory.getExporter();
+//            try {
+//                exporter.setup();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void execute() {
+//            try {
+//                exporter.send();
+//                Thread.sleep(15000);
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void stop() {
+//            super.stop();
+//            try {
+//                exporter.tearDown();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }
