@@ -24,7 +24,7 @@ public class AvroClient {
 
         Configuration configuration = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
 
-        SimpleMqttReceiver r = new SimpleMqttReceiver(configuration);
+        SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
         AvroSerializationHelper avro = new AvroSerializationHelper();
         avro.loadSchema("sensor.json");
@@ -47,6 +47,8 @@ public class AvroClient {
                 e.printStackTrace();
             }
         }
+
+        receiver.getClient().disconnect();
     }
 }
 

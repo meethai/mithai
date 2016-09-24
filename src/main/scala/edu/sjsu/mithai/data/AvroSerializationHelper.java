@@ -2,9 +2,8 @@ package edu.sjsu.mithai.data;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.BinaryEncoder;
-import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.io.*;
+import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 
 import java.io.ByteArrayOutputStream;
@@ -37,10 +36,7 @@ public class AvroSerializationHelper {
 
         return new String(Base64.getEncoder().encode(serializedBytes));
 //
-//        SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
-//        Decoder decoder = DecoderFactory.get().binaryDecoder(serializedBytes, null);
-//        GenericRecord user = reader.read(null, decoder);
-//        System.out.println("BYTE USER: " + user);
+//
 //
 //        // Serialize user1 and user2 to disk
 //        File file = new File("users.avro");
@@ -63,6 +59,16 @@ public class AvroSerializationHelper {
 //            user = dataFileReader.next(user);
 //            System.out.println(user);
 //        }
+    }
+
+    public GenericRecord deserialize(String data) throws IOException {
+
+        byte[] bytes = Base64.getDecoder().decode(data.getBytes());
+
+        SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
+        Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
+        GenericRecord record = reader.read(null, decoder);
+        return record;
     }
 
     public Schema getSchema() {
