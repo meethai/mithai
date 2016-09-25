@@ -6,6 +6,10 @@ public interface MithaiProperties {
     static String IP = "IP";
     static String ID = "ID";
 
+    // Sensor & Data generation related properties
+    static String NUMBER_OF_SENSORS = "NUMBER_OF_SENSORS";
+    static String DATA_GENERATION_INTERVAL = "DATA_GENERATION_INTERVAL";
+
     // INJECTOR PROPERTIES
     static String MQTT_BROKER = "MQTT_BROKER";
     static String MQTT_TOPIC = "MQTT_TOPIC";
