@@ -31,11 +31,14 @@ public class TaskManager {
         tasks.add(task);
     }
 
-    public void stopAll() throws InterruptedException {
+    public synchronized void stopAll() throws InterruptedException {
 
         for (Stoppable task : tasks) {
             task.stop();
         }
+
+        // remove all tasks
+        tasks.clear();
 
         threadPool.shutdown();
         threadPool.awaitTermination(60, TimeUnit.SECONDS);
