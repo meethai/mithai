@@ -1,27 +1,22 @@
 package edu.sjsu.mithai.config;
 
+import edu.sjsu.mithai.util.BaseTest;
 import edu.sjsu.mithai.util.TaskManager;
+import org.junit.Test;
 
 import java.io.IOException;
 
-public class ConfigurationTest {
+public class ConfigurationTest extends BaseTest {
 
-    public static void main(String[] args) {
-        ConfigurationTest test = new ConfigurationTest();
-        test.test();
+
+    public ConfigurationTest() throws IOException {
+
     }
 
-    private void test() {
-
-        try {
-            Configuration c = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
-            System.out.println(c.getProperties());
-
-            // start monitor task
-            TaskManager.getInstance().submitTask(new ConfigMonitorTask(c));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    @Test
+    public void test() {
+        // start monitor task
+        TaskManager.getInstance().submitTask(new ConfigMonitorTask(config));
+        stopAfter(60);
     }
 }
