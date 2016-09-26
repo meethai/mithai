@@ -12,13 +12,18 @@ public class TaskManager {
     private List<Stoppable> tasks;
     private ExecutorService threadPool;
 
+    private TaskManager() {
+        this.threadPool = Executors.newCachedThreadPool();
+        this.tasks = new ArrayList<>();
+    }
+
     public static TaskManager getInstance() {
         return ourInstance;
     }
 
-    private TaskManager() {
-        this.threadPool = Executors.newCachedThreadPool();
-        this.tasks = new ArrayList<>();
+    public void submitTask(StoppableExecutableTask task) {
+        threadPool.submit(task);
+        tasks.add(task);
     }
 
     public void submitTask(StoppableRunnableTask task) {
@@ -26,11 +31,14 @@ public class TaskManager {
         tasks.add(task);
     }
 
-    public void stopAll() throws InterruptedException {
+    public synchronized void stopAll() throws InterruptedException {
 
         for (Stoppable task : tasks) {
             task.stop();
         }
+
+        // remove all tasks
+        tasks.clear();
 
         threadPool.shutdown();
         threadPool.awaitTermination(60, TimeUnit.SECONDS);

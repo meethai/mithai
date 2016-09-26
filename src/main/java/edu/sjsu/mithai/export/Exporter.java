@@ -1,25 +1,18 @@
 package edu.sjsu.mithai.export;
 
-/**
- * Created by sjinturkar on 9/18/16.
- */
+import edu.sjsu.mithai.config.Configuration;
+
 public class Exporter {
 
     private IExporter exporter;
+    private Configuration configuration;
 
-    public Exporter(String type) throws Exception {
-        init(type);
+    public Exporter(Configuration configuration) throws Exception {
+        this.configuration = configuration;
+        this.exporter = ExporterFactory.getExporter(configuration);
     }
 
-    private void init(String type) throws Exception {
-        exporter = ExporterFactory.getExporter(type);
-        exporter.setup();
-        boolean shutDown = false;
-
-        do {
-            exporter.send();
-            Thread.sleep(15000);
-        } while (!shutDown);
-        exporter.tearDown();
+    public IExporter getExporter() {
+        return exporter;
     }
 }

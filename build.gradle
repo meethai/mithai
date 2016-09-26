@@ -59,6 +59,13 @@ task runGraphCreator(type: JavaExec, dependsOn: classes) {
     classpath configurations.runtime
 }
 
+task runMqttClient(type: JavaExec, dependsOn: classes) {
+    main = 'edu.sjsu.mithai.sensors.Client'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+//    args = [mosquitoURL, mosquitoTopic]
+}
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
