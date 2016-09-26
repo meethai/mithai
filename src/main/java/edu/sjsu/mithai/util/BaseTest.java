@@ -15,7 +15,7 @@ public abstract class BaseTest {
         loadConfig();
     }
 
-    public abstract void test();
+    public abstract void test() throws Exception;
 
     public void loadConfig() throws IOException {
         config = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());

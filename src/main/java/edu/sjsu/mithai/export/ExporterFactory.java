@@ -2,6 +2,7 @@ package edu.sjsu.mithai.export;
 
 import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.config.MithaiProperties;
+import edu.sjsu.mithai.export.console.ConsoleExporter;
 import edu.sjsu.mithai.export.http.HttpExporter;
 import edu.sjsu.mithai.export.kafka.KafkaExporter;
 
@@ -24,6 +25,9 @@ public class ExporterFactory {
 
             case "HTTP":
                 return new HttpExporter(configuration.getProperty(EXPORTER_REMOTE_URI));
+
+            case "CONSOLE":
+                return new ConsoleExporter();
 
             default:
                 return null;
