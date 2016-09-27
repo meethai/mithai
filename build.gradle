@@ -12,6 +12,7 @@ apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: "com.commercehub.gradle.plugin.avro"
 
 compileJava {
     sourceCompatibility = '1.8'
@@ -60,6 +61,18 @@ task runMqttClient(type: JavaExec, dependsOn: classes) {
 //    args = [mosquitoURL, mosquitoTopic]
 }
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.9.0"
+    }
+}
+
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
@@ -91,6 +104,12 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.5'
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+
+    // https://mvnrepository.com/artifact/org.apache.avro/avro
+    compile group: 'org.apache.avro', name: 'avro', version: '1.8.1'
+
+    // https://mvnrepository.com/artifact/org.apache.avro/avro-compiler
+    compile group: 'org.apache.avro', name: 'avro-compiler', version: '1.8.1'
 
 }
 

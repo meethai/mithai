@@ -12,7 +12,15 @@ import java.io.IOException;
 public class MQTTReceiverTaskTest extends BaseTest {
 
 
+<<<<<<< HEAD
     public MQTTReceiverTaskTest() throws IOException {
+=======
+        try {
+            Thread.sleep(45 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+>>>>>>> 6066aeb25467c96dc14810e3f7071401131937aa
 
     }
 
