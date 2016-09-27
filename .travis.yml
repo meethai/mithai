@@ -1,3 +1,7 @@
+before_install:
+   - java install 1.8.0
+
+
 
 language: scala
 scala :
