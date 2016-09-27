@@ -13,12 +13,14 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
   */
 class MQTTReciever(val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(this.getClass)
+
   private val sparkConf = new SparkConf()
     .setAppName("MQTTWordCount")
     .setMaster("local[1]")
   logger.debug("setting spark context")
   private val _ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
   private val lines = MQTTUtils.createStream(_ssc, brokerUrl, topic, StorageLevel.MEMORY_ONLY_SER_2)
+
   private val words = lines.flatMap(x => x.split(" "))
 
   words.foreachRDD(rdd => {
