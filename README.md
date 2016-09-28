@@ -1,6 +1,6 @@
 # Project Mithai
 
-[![Build Status](https://travis-ci.com/saurabhjinturkar/mithai.svg?token=ycNBAbLd8duhUgVFrUfy&branch=master)](https://travis-ci.com/saurabhjinturkar/mithai)
+[![Build Status](https://travis-ci.com/kaustubh-walokar/mithai.svg?token=Yu4haBFCKfHia5eAMyZo&branch=master)](https://travis-ci.com/kaustubh-walokar/mithai)
 ## List of gradle tasks
  Run using ``` gradle <taskName> ``` in terminal from project root
  1. startMosquitto - starts teh Mosquitto server using the config in the resources directory

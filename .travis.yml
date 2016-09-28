@@ -2,15 +2,15 @@
 language: scala
 scala :
     - 2.11.8
-
-#anguage: java
+#
+#language: java
 #java:
-#   - oraclejdk8
-
+#    - oraclejdk8
+#
 
 install: true
 
 script:
     - "gradle clean"
     - "gradle build -x test"
-   
+
