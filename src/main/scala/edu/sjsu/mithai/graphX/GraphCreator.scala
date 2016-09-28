@@ -4,48 +4,78 @@ package edu.sjsu.mithai.graphX
   * Created by Madhura on 9/18/16.
   */
 
+import java.util
+
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
+import scala.collection.JavaConversions._
 
 object GraphCreator {
-
   def main(args: Array[String]) {
+    val gc = new GraphCreator()
+    gc.test(args)
+  }
+}
 
+class GraphCreator {
+
+  def test(args: Array[String]) = {
     val conf = new SparkConf()
       .setAppName("GraphCreator")
       .setMaster("local[2]")
 
     val sc = new SparkContext(conf)
-    print("___________________________________________________________________________________________")
 
-    val vertexArray = Array(
-      (1L, ("Sensor1", 28)),
-      (2L, ("Sensor2", 27)),
-      (3L, ("Sensor3", 65)),
-      (4L, ("Sensor4", 42)),
-      (5L, ("Sensor5", 55)),
-      (6L, ("Sensor6", 50))
-    )
-    val edgeArray = Array(
-      Edge(2L, 1L, 7),
-      Edge(2L, 4L, 2),
-      Edge(3L, 2L, 4),
-      Edge(3L, 6L, 3),
-      Edge(4L, 1L, 1),
-      Edge(5L, 2L, 2),
-      Edge(5L, 3L, 8),
-      Edge(5L, 6L, 3)
-    )
-    val vertexRDD: RDD[(Long, (String, Int))] = sc.parallelize(vertexArray)
-    val edgeRDD: RDD[Edge[Int]] = sc.parallelize(edgeArray)
+    var vertex: util.ArrayList[String] = new util.ArrayList[String]()
+    vertex.add("{\"sensor1\",\"100\"}")
+    vertex.add("{\"sensor2\",\"200\"}")
+    vertex.add("{\"sensor3\",\"300\"}")
+    vertex.add("{\"sensor4\",\"400\"}")
+    vertex.add("{\"sensor5\",\"500\"}")
+    vertex.add("{\"sensor6\",\"600\"}")
 
-    val graph: Graph[(String, Int), Int] = Graph(vertexRDD, edgeRDD)
+    val v = getVertexArrayFromArrayList(vertex)
+    val e = getEdgeArrayFromVertexArray(v)
 
-    for ((id, (sensor, tempval)) <- graph.vertices.filter { case (id, (sensor, tempval)) => tempval > 30 }.collect) {
-      println(s"$sensor is $tempval")
+
+    val vertexRD: RDD[(Long, (String))] = sc.parallelize(v.toList)
+    val edgeRDD: RDD[Edge[Int]] = sc.parallelize(e.toList)
+
+    val graph: Graph[(String), Int] = Graph(vertexRD, edgeRDD)
+
+
+    for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
+      println(s"$id is $sensor")
     }
 
+  }
+
+  def getVertexArrayFromArrayList(al: util.ArrayList[String]): util.ArrayList[(Long, String)] = {
+    val v = new util.ArrayList[(Long, String)]()
+    var curr: Long = 0L
+    al.toList.foreach(
+      s => {
+        curr += 1
+        v.add((curr, s))
+      }
+    )
+    //    print("\n"+"------>"+v)
+    return v
+  }
+
+  def getEdgeArrayFromVertexArray(va: util.ArrayList[(Long, String)]): util.ArrayList[Edge[PartitionID]] = {
+
+    val edge = new util.ArrayList[Edge[Int]]()
+    for (i <- 0 until va.size())
+      for (j <- 0 until va.size()) {
+        if (i != j)
+          edge += Edge(i.toLong, j.toLong, 1)
+      }
+
+    //    print("Edge Array----> "+edge)
+
+    return edge
   }
 }
