@@ -21,6 +21,7 @@ public class ConfigMonitorTask extends StoppableExecutableTask {
     public ConfigMonitorTask(Configuration config) {
         this.config = config;
         this.file = new File(config.getPropertyFile());
+        System.out.println(this.file);
         this.lastModified = file.lastModified();
     }
 
