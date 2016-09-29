@@ -13,30 +13,30 @@ import org.apache.spark.{SparkConf, SparkContext}
 import scala.collection.JavaConversions._
 
 object GraphCreator {
-  def main(args: Array[String]) {
+  def main(vertexList: util.ArrayList[String], sc: SparkContext) {
     val gc = new GraphCreator()
-    gc.test(args)
+    gc.createGraph(vertexList,sc)
   }
 }
 
 class GraphCreator {
 
-  def test(args: Array[String]) = {
-    val conf = new SparkConf()
-      .setAppName("GraphCreator")
-      .setMaster("local[2]")
+  def createGraph(vertexList: util.ArrayList[String], sc: SparkContext): Graph[(String), Int] = {
+//    val conf = new SparkConf()
+//      .setAppName("GraphCreator")
+//      .setMaster("local[2]")
+//
+//    val sc = new SparkContext(conf)
 
-    val sc = new SparkContext(conf)
+//    var vertex: util.ArrayList[String] = new util.ArrayList[String]()
+//    vertex.add("{\"sensor1\",\"100\"}")
+//    vertex.add("{\"sensor2\",\"200\"}")
+//    vertex.add("{\"sensor3\",\"300\"}")
+//    vertex.add("{\"sensor4\",\"400\"}")
+//    vertex.add("{\"sensor5\",\"500\"}")
+//    vertex.add("{\"sensor6\",\"600\"}")
 
-    var vertex: util.ArrayList[String] = new util.ArrayList[String]()
-    vertex.add("{\"sensor1\",\"100\"}")
-    vertex.add("{\"sensor2\",\"200\"}")
-    vertex.add("{\"sensor3\",\"300\"}")
-    vertex.add("{\"sensor4\",\"400\"}")
-    vertex.add("{\"sensor5\",\"500\"}")
-    vertex.add("{\"sensor6\",\"600\"}")
-
-    val v = getVertexArrayFromArrayList(vertex)
+    val v = getVertexArrayFromArrayList(vertexList)
     val e = getEdgeArrayFromVertexArray(v)
 
 
@@ -46,9 +46,11 @@ class GraphCreator {
     val graph: Graph[(String), Int] = Graph(vertexRD, edgeRDD)
 
 
-    for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
-      println(s"$id is $sensor")
-    }
+//    for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
+//      println(s"$id is $sensor")
+//    }
+
+    return graph
 
   }
 
