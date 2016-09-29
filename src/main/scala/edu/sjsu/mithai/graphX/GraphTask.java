@@ -1,17 +1,16 @@
 package edu.sjsu.mithai.graphX;
 
 
-import edu.sjsu.mithai.util.StoppableRunnableTask;
+import edu.sjsu.mithai.util.StoppableExecutableTask;
 import org.apache.spark.SparkConf;
 
-public class GraphTask extends StoppableRunnableTask {
+public class GraphTask extends StoppableExecutableTask {
 
     GraphProc gp;
 
     SparkConf conf = new SparkConf()
             .setAppName("GraphCreator")
             .setMaster("local[2]");
-    private boolean flag=true;
 
     public GraphTask() {
         // Define required variable
@@ -20,17 +19,13 @@ public class GraphTask extends StoppableRunnableTask {
     }
 
     @Override
-    public void run() {
-        // Start running graphx
-        while (flag)
-            gp.gProcessor(conf);
+    public void execute() {
+        System.out.println("Hello world!");
+        gp.gProcessor(conf);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-
-    @Override
-    public void stop() {
-        // stop your GraphX context
-        flag=false;
-    }
-
-
 }

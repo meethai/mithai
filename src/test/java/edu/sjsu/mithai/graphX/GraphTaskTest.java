@@ -1,27 +1,23 @@
 package edu.sjsu.mithai.graphX;
 
+import edu.sjsu.mithai.util.BaseTest;
 import edu.sjsu.mithai.util.TaskManager;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * Created by Madhura on 9/26/16.
  */
-public class GraphTaskTest {
+public class GraphTaskTest extends BaseTest{
+
+    public GraphTaskTest() throws IOException {
+    }
 
     @Test
-    public void testRun() {
-
+    @Override
+    public void test() {
         TaskManager.getInstance().submitTask(new GraphTask());
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            TaskManager.getInstance().stopAll();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        stopAfter(15);
     }
 }
