@@ -6,9 +6,9 @@ package edu.sjsu.mithai.graphX
 
 import java.util
 
+import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.JavaConversions._
 
@@ -37,6 +37,7 @@ class GraphCreator {
 //    vertex.add("{\"sensor6\",\"600\"}")
 
     val v = getVertexArrayFromArrayList(vertexList)
+
     val e = getEdgeArrayFromVertexArray(v)
 
 
