@@ -11,29 +11,19 @@ import java.io.IOException;
  */
 public class MQTTReceiverTaskTest extends BaseTest {
 
-    public static void main(String[] args) {
-        try {
-            MQTTReceiverTaskTest mr = new MQTTReceiverTaskTest();
-            mr.test();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public MQTTReceiverTaskTest() throws IOException {
     }
 
-    public MQTTReceiverTaskTest() throws IOException {
+    public static void main(String[] args) throws IOException {
 
-//        try {
-//            Thread.sleep(45 * 1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
+            MQTTReceiverTaskTest mr = new MQTTReceiverTaskTest();
+            mr.test();
 
     }
 
     @Test
     public void test() {
         TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
-        stopAfter(45);
+        stopAfter(15);
     }
 }

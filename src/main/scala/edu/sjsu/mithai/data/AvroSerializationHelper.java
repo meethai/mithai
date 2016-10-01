@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Base64;
 
-public class AvroSerializationHelper implements SerializationHelper{
+public class AvroSerializationHelper implements SerializationHelper<GenericRecord>{
 
     private Schema schema;
     private Logger logger = Logger.getLogger(getClass());
@@ -26,18 +26,14 @@ public class AvroSerializationHelper implements SerializationHelper{
     }
 
     @Override
-    public String serialize(Object o) {
-        GenericRecord data = (GenericRecord) o;
+    public String serialize(GenericRecord data) throws Exception{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(out, null);
         DatumWriter<GenericRecord> writer = new SpecificDatumWriter<GenericRecord>(schema);
-        try {
-            writer.write(data, encoder);
-            encoder.flush();
-            out.close();
-        } catch (IOException e) {
-            logger.error(e.getMessage(),e);
-        }
+
+        writer.write(data, encoder);
+        encoder.flush();
+        out.close();
         byte[] serializedBytes = out.toByteArray();
 
         return new String(Base64.getEncoder().encode(serializedBytes));
@@ -68,19 +64,12 @@ public class AvroSerializationHelper implements SerializationHelper{
     }
 
     @Override
-    public Object deserialize(String o) {
-
-        String data = (String) o;
+    public GenericRecord deserialize(String data) throws Exception{
         byte[] bytes = Base64.getDecoder().decode(data.getBytes());
 
         SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
-        GenericRecord record = null;
-        try {
-            record = reader.read(null, decoder);
-        } catch (IOException e) {
-            logger.error(e.getMessage(),e);
-        }
+        GenericRecord record = reader.read(null, decoder);
         return record;
     }
 
