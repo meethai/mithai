@@ -110,10 +110,8 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.5'
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
-
     // https://mvnrepository.com/artifact/org.apache.avro/avro
     compile group: 'org.apache.avro', name: 'avro', version: '1.8.1'
-
     // https://mvnrepository.com/artifact/org.apache.avro/avro-compiler
     compile group: 'org.apache.avro', name: 'avro-compiler', version: '1.8.1'
 

@@ -5,6 +5,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,19 +13,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Base64;
 
-public class AvroSerializationHelper {
+public class AvroSerializationHelper implements SerializationHelper<GenericRecord>{
 
     private Schema schema;
+    private Logger logger = Logger.getLogger(getClass());
 
     public void loadSchema(String schemaFile) throws IOException {
         Schema.Parser parser = new Schema.Parser();
         URL url = getClass().getClassLoader().getResource(schemaFile);
         this.schema = parser.parse(new File(url.getFile()));
-        System.out.println(schema.getFields());
+        logger.info(schema.getFields());
     }
 
-    public String serialize(GenericRecord data) throws IOException {
-
+    @Override
+    public String serialize(GenericRecord data) throws Exception{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(out, null);
         DatumWriter<GenericRecord> writer = new SpecificDatumWriter<GenericRecord>(schema);
@@ -61,8 +63,8 @@ public class AvroSerializationHelper {
 //        }
     }
 
-    public GenericRecord deserialize(String data) throws IOException {
-
+    @Override
+    public GenericRecord deserialize(String data) throws Exception{
         byte[] bytes = Base64.getDecoder().decode(data.getBytes());
 
         SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
