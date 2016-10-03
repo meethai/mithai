@@ -7,19 +7,16 @@ import edu.sjsu.mithai.mqtt.MQTTPublisher;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-import java.io.IOException;
 
 public class AvroClient {
 
-    public static void main(String[] args) throws IOException, MqttException {
+    public static void main(String[] args) throws Exception {
         AvroClient c = new AvroClient();
         c.test();
 
     }
 
-    private void test() throws IOException, MqttException {
+    private void test() throws Exception {
 
         Configuration configuration = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
 

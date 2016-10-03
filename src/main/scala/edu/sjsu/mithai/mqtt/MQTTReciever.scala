@@ -1,46 +1,89 @@
 package edu.sjsu.mithai.mqtt
 
-import java.util
 
+import edu.sjsu.mithai.config.Configuration
+import edu.sjsu.mithai.config.MithaiProperties._
+import edu.sjsu.mithai.data.{AvroSerializationHelper, SerializationHelper}
+import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.Logger
 import org.apache.spark.SparkConf
-import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
   * Created by kaustubh on 9/17/16.
   */
-class MQTTReciever(val brokerUrl: String, val topic: String) {
+class MQTTReciever[D](val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(this.getClass)
 
-  private val sparkConf = new SparkConf()
-    .setAppName("MQTTWordCount")
-    .setMaster("local[1]")
+  private var _serializationHelper: SerializationHelper[D] = _
+
   logger.debug("setting spark context")
-  private val _ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
-  private val lines = MQTTUtils.createStream(_ssc, brokerUrl, topic, StorageLevel.MEMORY_ONLY_SER_2)
 
-  private val words = lines.flatMap(x => x.split(" "))
+  private var data: List[D] = _
 
-  words.foreachRDD(rdd => {
-    var hm = new util.ArrayList[String]()
-    for (item <- rdd.collect()) {
-      val a = item.split("-!-")
-      val data: String = a {
-        1
-      }
-      hm.add(data)
-    }
+  private val streamingObject = new StreamingObject("MQTTReceiver@" + brokerUrl + "-" + topic)
 
-    //TODO call madhuras func here
-    for (i <- 0 to hm.size() - 1) {
-      println("\t\t" + hm.get(i))
-    }
-
+  private val stream = streamingObject.getStream(brokerUrl, topic)
+  stream.foreachRDD(r => {
+    data = r.collect().toList.map(_serializationHelper.deserialize(_))
+    //TODO sendToGraphProcessor(data)
+    data.foreach(println)
   })
 
-  _ssc.start()
+  /**
+    * This method needs to be called explicitly from now on to start the spark context.
+    *
+    * @throws java.lang.NullPointerException if the Serilization helper is not set
+    */
+  @throws(classOf[NullPointerException])
+  def start(): Unit = {
+    if (_serializationHelper == null) {
+      throw new NullPointerException("SerializationHelper cannot be null in MQTTReciever")
+    }
+    streamingObject.ssc.start()
+  }
 
-  def ssc = _ssc
+  /**
+    * This method stops the Spark Streaming (not Graceful)
+    */
+  def stop(stopSparkContext: Boolean = true): Unit = streamingObject.ssc.stop(stopSparkContext)
+
+  /**
+    * Wait for the execution to stop. Any exceptions that occurs during the execution
+    * will be thrown in this thread.
+    */
+  def awaitTermination(): Unit = streamingObject.ssc.awaitTermination()
+
+  /**
+    * Sets the Serilization Helper required to be used for de-serializing the input stream to type D
+    *
+    * @param serializationHelper
+    */
+  def setSerializationHelper(serializationHelper: SerializationHelper[D]): Unit = {
+    _serializationHelper = serializationHelper
+  }
+
+}
+
+class StreamingObject(appName: String = "MQTTReceiver") {
+  val sparkConf = new SparkConf()
+    .setAppName(appName)
+    .setMaster("local[2]")
+
+  val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
+
+  def getStream(brokerUrl: String, topic: String) = MQTTUtils.createStream(ssc, brokerUrl, topic)
+}
+
+object MQTTReciever {
+  def main(args: Array[String]): Unit = {
+    val config = new Configuration(getClass.getClassLoader.getResource("application.properties").getFile)
+    val mr = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC))
+    val avro = new AvroSerializationHelper
+    avro.loadSchema("sensor.json")
+    mr.setSerializationHelper(avro)
+    mr.start()
+    mr.awaitTermination()
+  }
 }

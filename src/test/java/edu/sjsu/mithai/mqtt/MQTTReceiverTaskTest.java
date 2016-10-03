@@ -12,12 +12,18 @@ import java.io.IOException;
 public class MQTTReceiverTaskTest extends BaseTest {
 
     public MQTTReceiverTaskTest() throws IOException {
+    }
+
+    public static void main(String[] args) throws IOException {
+
+            MQTTReceiverTaskTest mr = new MQTTReceiverTaskTest();
+            mr.test();
 
     }
 
     @Test
     public void test() {
         TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
-        stopAfter(45);
+        stopAfter(15);
     }
 }
