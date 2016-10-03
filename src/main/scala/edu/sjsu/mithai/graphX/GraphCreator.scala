@@ -21,6 +21,35 @@ object GraphCreator {
 
 class GraphCreator {
 
+  def createGraph(vertexList: List[String], sc: SparkContext): Graph[(String), Int] = {
+
+    def getVertexArrayFromArrayList(al: List[String]): util.ArrayList[(Long, String)] = {
+      val v = new util.ArrayList[(Long, String)]()
+      var curr: Long = 0L
+      al.foreach(
+        s => {
+          curr += 1
+          v.add((curr, s))
+        }
+      )
+      return v
+    }
+
+    val v = getVertexArrayFromArrayList(vertexList)
+
+    val e = getEdgeArrayFromVertexArray(v)
+
+
+    val vertexRD: RDD[(Long, (String))] = sc.parallelize(v.toList)
+
+    val edgeRDD: RDD[Edge[Int]] = sc.parallelize(e.toList)
+
+    val graph: Graph[(String), Int] = Graph(vertexRD, edgeRDD)
+
+    return graph
+
+  }
+
   def createGraph(vertexList: util.ArrayList[String], sc: SparkContext): Graph[(String), Int] = {
 //    val conf = new SparkConf()
 //      .setAppName("GraphCreator")

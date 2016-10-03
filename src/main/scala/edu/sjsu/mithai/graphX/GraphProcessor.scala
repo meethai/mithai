@@ -1,16 +1,18 @@
 package edu.sjsu.mithai.graphX
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.graphx._
 import java.util
+
+import org.apache.spark.graphx._
+import org.apache.spark.{SparkConf, SparkContext}
+
 /**
   * Created by Madhura on 9/26/16.
   */
 
-object GraphProc{
+object GraphProc {
 
   def main(args: Array[String]) {
-    val gp =  new GraphProc()
+    val gp = new GraphProc()
 
     val conf = new SparkConf()
       .setAppName("GraphCreator")
@@ -37,7 +39,7 @@ class GraphProc {
     vertex.add("{\"sensor6\",\"600\"}")
 
     //generated graph
-    val graph  = new GraphCreator().createGraph(vertex,sc)
+    val graph = new GraphCreator().createGraph(vertex, sc)
 
     //TODO: Add graph processing functions
     for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
@@ -45,13 +47,19 @@ class GraphProc {
     }
 
     //Function to collect Neighbor Ids for each vertex
-    val  v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
-    graph.aggregateMessages[Int](x=>x.sendToDst(1),_+_,TripletFields.None)
+    val v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
+    graph.aggregateMessages[Int](x => x.sendToDst(1), _ + _, TripletFields.None)
     print(s"-----------------------------------------------------------------------")
-    v.collect().foreach(x => print(x._1+"\nVertexRDD\n"))
+    v.collect().foreach(x => print(x._1 + "\nVertexRDD\n"))
 
 
+  }
 
+  def processMe(graph: Graph[(String), Int]): Unit ={
+    val v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
+    graph.aggregateMessages[Int](x => x.sendToDst(1), _ + _, TripletFields.None)
+    print(s"-----------------------------------------------------------------------")
+    v.collect().foreach(x => print(x._1 + "\nVertexRDD\n"))
   }
 
 }
