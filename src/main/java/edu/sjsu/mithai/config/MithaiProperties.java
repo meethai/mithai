@@ -6,6 +6,7 @@ public interface MithaiProperties {
     static String IP = "IP";
     static String ID = "ID";
     static String CONNECTED_DEVICE_IDS = "CONNECTED_DEVICE_IDS";
+    static String LOCAL_GRAPH = "LOCAL_GRAPH";
 
     // Sensor & Data generation related properties
     static String NUMBER_OF_SENSORS = "NUMBER_OF_SENSORS";

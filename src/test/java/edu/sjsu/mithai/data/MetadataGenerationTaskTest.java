@@ -32,5 +32,7 @@ public class MetadataGenerationTaskTest extends BaseTest {
 
         TaskManager.getInstance().submitTask(task);
         stopAfter(45);
+        receiver.getClient().disconnect(1000);
+        receiver.getClient().close();
     }
 }

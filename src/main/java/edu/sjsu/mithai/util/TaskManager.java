@@ -44,4 +44,11 @@ public class TaskManager {
         threadPool.awaitTermination(60, TimeUnit.SECONDS);
     }
 
+    public synchronized void stop(Class clazz) {
+        for(Stoppable task : tasks) {
+            if (clazz.isInstance(task)) {
+                task.stop();
+            }
+        }
+    }
 }
