@@ -51,35 +51,12 @@ class GraphCreator {
   }
 
   def createGraph(vertexList: util.ArrayList[String], sc: SparkContext): Graph[(String), Int] = {
-//    val conf = new SparkConf()
-//      .setAppName("GraphCreator")
-//      .setMaster("local[2]")
-//
-//    val sc = new SparkContext(conf)
-
-//    var vertex: util.ArrayList[String] = new util.ArrayList[String]()
-//    vertex.add("{\"sensor1\",\"100\"}")
-//    vertex.add("{\"sensor2\",\"200\"}")
-//    vertex.add("{\"sensor3\",\"300\"}")
-//    vertex.add("{\"sensor4\",\"400\"}")
-//    vertex.add("{\"sensor5\",\"500\"}")
-//    vertex.add("{\"sensor6\",\"600\"}")
 
     val v = getVertexArrayFromArrayList(vertexList)
-
     val e = getEdgeArrayFromVertexArray(v)
-
-
     val vertexRD: RDD[(Long, (String))] = sc.parallelize(v.toList)
     val edgeRDD: RDD[Edge[Int]] = sc.parallelize(e.toList)
-
     val graph: Graph[(String), Int] = Graph(vertexRD, edgeRDD)
-
-
-//    for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
-//      println(s"$id is $sensor")
-//    }
-
     return graph
 
   }

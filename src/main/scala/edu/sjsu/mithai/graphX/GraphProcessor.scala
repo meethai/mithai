@@ -29,7 +29,6 @@ class GraphProc {
 
     val sc = new SparkContext(conf)
 
-    //incoming arrayliist (call from kaustubh`s func)
     val vertex: util.ArrayList[String] = new util.ArrayList[String]
     vertex.add("{\"sensor1\",\"100\"}")
     vertex.add("{\"sensor2\",\"200\"}")
