@@ -21,12 +21,12 @@ public class TaskManager {
         return ourInstance;
     }
 
-    public void submitTask(StoppableExecutableTask task) {
+    public synchronized void submitTask(StoppableExecutableTask task) {
         threadPool.submit(task);
         tasks.add(task);
     }
 
-    public void submitTask(StoppableRunnableTask task) {
+    public synchronized void submitTask(StoppableRunnableTask task) {
         threadPool.submit(task);
         tasks.add(task);
     }
@@ -44,4 +44,11 @@ public class TaskManager {
         threadPool.awaitTermination(60, TimeUnit.SECONDS);
     }
 
+    public synchronized void stop(Class clazz) {
+        for(Stoppable task : tasks) {
+            if (clazz.isInstance(task)) {
+                task.stop();
+            }
+        }
+    }
 }
