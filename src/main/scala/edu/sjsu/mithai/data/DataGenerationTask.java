@@ -7,51 +7,57 @@ import edu.sjsu.mithai.sensors.IDevice;
 import edu.sjsu.mithai.util.StoppableExecutableTask;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataGenerationTask extends StoppableExecutableTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(DataGenerationTask.class);
+
     private SensorStore sensorStore;
     private Configuration configuration;
+    private MQTTPublisher publisher;
+    private List<GenericRecord> dataList;
     private AvroSerializationHelper avro;
-    private MQTTPublisher mqttPublisher;
-    private String topic;
 
     public DataGenerationTask(Configuration configuration, SensorStore sensorStore) throws IOException {
-
         this.configuration = configuration;
         this.sensorStore = sensorStore;
+        this.publisher = new MQTTPublisher(configuration.getProperty(MithaiProperties.MQTT_BROKER));
+        this.dataList = new ArrayList<>(sensorStore.getDevices().size());
+
         avro = new AvroSerializationHelper();
         avro.loadSchema("sensor.json");
-        mqttPublisher = new MQTTPublisher(configuration.getProperty(MithaiProperties.MQTT_BROKER));
-        topic = configuration.getProperty(MithaiProperties.MQTT_TOPIC);
 
+        for (IDevice device : sensorStore.getDevices()) {
+            GenericRecord record = new GenericData.Record(avro.getSchema());
+            record.put("id", device.getId());
+            dataList.add(record);
+        }
     }
 
     @Override
     public void execute() {
 
+        int index = 0;
         for (IDevice device : sensorStore.getDevices()) {
-
-            System.out.println(device.getId() + "=> " + device.sense());
-            GenericRecord record = new GenericData.Record(avro.getSchema());
-            record.put("id", device.getId());
+            GenericRecord record = dataList.get(index++);
             record.put("value", device.sense());
             try {
-                mqttPublisher.sendDataToTopic(avro.serialize(record), topic);
-                Thread.sleep(1 * 1000);
+                publisher.sendDataToTopic(avro.serialize(record), configuration.getProperty(MithaiProperties.MQTT_TOPIC));
             } catch (Exception e) {
-                e.printStackTrace();
+               logger.error(e.getMessage(), e);
             }
-
         }
-
 
         try {
             Thread.sleep(Long.parseLong(configuration.getProperty(MithaiProperties.DATA_GENERATION_INTERVAL)));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 }

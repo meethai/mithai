@@ -4,7 +4,6 @@ import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.data.AvroSerializationHelper;
 import edu.sjsu.mithai.mqtt.MQTTPublisher;
-import edu.sjsu.mithai.mqtt.SimpleMqttReceiver;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -21,7 +20,7 @@ public class AvroClient {
 
         Configuration configuration = new Configuration(getClass().getClassLoader().getResource("application.properties").getFile());
 
-        SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
+//        SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
         AvroSerializationHelper avro = new AvroSerializationHelper();
         avro.loadSchema("sensor.json");
@@ -30,7 +29,7 @@ public class AvroClient {
         GenericRecord record = new GenericData.Record(avro.getSchema());
         record.put("id", "sensor1");
 
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<10000;i++) {
             record.put("value", sensor.sense());
             String serialize = avro.serialize(record);
             System.out.println(serialize);
@@ -39,13 +38,13 @@ public class AvroClient {
             mqttPublisher.sendDataToTopic(serialize, topic);
 
             try {
-                Thread.sleep(1 * 1000);
+                Thread.sleep(1 * 10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        receiver.getClient().disconnect();
+//        receiver.getClient().disconnect();
     }
 }
 
