@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.Base64;
 
-public class GenericSerializationHelper implements SerializationHelper {
+public class GenericSerializationHelper implements SerializationHelper<Object> {
 
     private Gson gson;
     private Class clazz;

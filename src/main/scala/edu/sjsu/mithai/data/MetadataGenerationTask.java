@@ -66,7 +66,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         publisher.sendDataToTopic(Base64.getEncoder().encodeToString(gson.toJson(metadata).getBytes()), "metadata");
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
