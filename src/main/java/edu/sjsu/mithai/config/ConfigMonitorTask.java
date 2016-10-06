@@ -50,5 +50,8 @@ public class ConfigMonitorTask extends StoppableExecutableTask {
 
     private void onChange() throws IOException {
         config.reload();
+        ConfigFileObservable.getInstance().setChanged();
+        ConfigFileObservable.getInstance().notifyObservers(config);
+        System.out.println("Config reloaded =>" + config.getProperties());
     }
 }
