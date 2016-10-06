@@ -71,15 +71,15 @@ public class Mithai implements Observer {
 
         if (observable instanceof ConfigFileObservable) {
             loadDevices();
-        }
 
-        // Kick out old data generation task and start new one
-        TaskManager.getInstance().stop(DataGenerationTask.class);
+            // Kick out old data generation task and start new one
+            TaskManager.getInstance().stop(DataGenerationTask.class);
 
-        try {
-            TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
