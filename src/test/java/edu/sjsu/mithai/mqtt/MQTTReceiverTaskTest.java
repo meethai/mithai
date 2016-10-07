@@ -24,6 +24,6 @@ public class MQTTReceiverTaskTest extends BaseTest {
     @Test
     public void test() {
         TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
-        stopAfter(15);
+        stopAfter(35);
     }
 }
