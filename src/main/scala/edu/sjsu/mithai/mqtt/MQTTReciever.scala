@@ -35,7 +35,7 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String) {
     //TODO sendToGraphProcessor(data)
     data.foreach(println)
     val graph = gc.createGraph(data.map(_.toString),streamingObject.ssc.sparkContext)
-    gp.processMe(graph)
+    gp.process(graph)
 
   })
 

@@ -54,7 +54,7 @@ class GraphProc {
 
   }
 
-  def processMe(graph: Graph[(String), Int]): Unit ={
+  def process(graph: Graph[(String), Int]): Unit = {
     val v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
     graph.aggregateMessages[Int](x => x.sendToDst(1), _ + _, TripletFields.None)
     print(s"-----------------------------------------------------------------------")
@@ -62,5 +62,3 @@ class GraphProc {
   }
 
 }
-
-
