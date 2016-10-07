@@ -3,10 +3,10 @@ package edu.sjsu.mithai.mqtt
 
 import edu.sjsu.mithai.config.Configuration
 import edu.sjsu.mithai.config.MithaiProperties._
-import edu.sjsu.mithai.data.{AvroSerializationHelper, GenericSerializationHelper, GraphMetadata, SerializationHelper}
+import edu.sjsu.mithai.data.{AvroSerializationHelper, SerializationHelper}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
@@ -85,8 +85,9 @@ object MQTTReciever {
 
     val mr = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ssc)
 
-    val metadataReciever = new MQTTReciever[Object](config.getProperty(MQTT_BROKER), "metadata", ssc)
-    val metadataSerializer = new GenericSerializationHelper(new GraphMetadata(null).getClass)
+    val metadataReciever = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), "metadata", ssc)
+    val metadataSerializer = new AvroSerializationHelper
+    metadataSerializer.loadSchema("metadata.json")
     metadataReciever.setSerializationHelper(metadataSerializer)
     metadataReciever.start()
     val avro = new AvroSerializationHelper

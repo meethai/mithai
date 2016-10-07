@@ -1,0 +1,10 @@
+{
+  "namespace": "edu.sjsu.mithai.data",
+  "type": "record",
+  "name": "AvroGraphMetadata",
+  "fields": [
+    {"name": "deviceId", "type": "string"},
+    {"name":"connectedDevices", "type": {"type": "array", "items":"string"}},
+    {"name":"localGraph", "type": {"type":"array", "items": "AvroGraphMetadata"}}
+  ]
+}
