@@ -23,7 +23,6 @@ public class MQTTReceiverTask extends StoppableRunnableTask {
 
     @Override
     public void run() {
-<<<<<<< HEAD
 //        logger.debug("mqtt reciever running....");
 //        reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC));
 //        AvroSerializationHelper av = new AvroSerializationHelper();
@@ -34,18 +33,6 @@ public class MQTTReceiverTask extends StoppableRunnableTask {
 //        }
 //        reciever.setSerializationHelper(av);
 //        reciever.start();
-=======
-        logger.debug("Mqtt reciever running....");
-        reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC));
-        AvroSerializationHelper av = new AvroSerializationHelper();
-        try {
-            av.loadSchema("sensor.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reciever.setSerializationHelper(av);
-        reciever.start();
->>>>>>> 429483caa6043d975e15ff2c50f6ee2e1261a108
     }
 
     @Override
