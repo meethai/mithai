@@ -23,7 +23,7 @@ public class MQTTReceiverTask extends StoppableRunnableTask {
 
     @Override
     public void run() {
-        logger.debug("mqtt reciever running....");
+        logger.debug("Mqtt reciever running....");
         reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC));
         AvroSerializationHelper av = new AvroSerializationHelper();
         try {
