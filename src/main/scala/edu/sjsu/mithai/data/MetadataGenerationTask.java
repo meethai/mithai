@@ -61,7 +61,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
             });
         }
 
-        List<CharSequence> connectedDevices = new ArrayList<>();
+        List<String> connectedDevices = new ArrayList<>();
 
         if (connectedDeviceIds != null && !connectedDeviceIds.trim().isEmpty()) {
             String[] ids = connectedDeviceIds.split(",");

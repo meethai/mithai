@@ -4,7 +4,7 @@
   "name": "AvroGraphMetadata",
   "fields": [
     {"name": "deviceId", "type": "string"},
-    {"name":"connectedDevices", "type": {"type": "array", "items":"string"}},
-    {"name":"localGraph", "type": {"type":"array", "items": "AvroGraphMetadata"}}
+    {"name":"connectedDevices", "type": ["null", {"type": "array", "items":"string"}]},
+    {"name":"localGraph", "type": ["null", {"type":"array", "items": "AvroGraphMetadata"}]}
   ]
 }

@@ -10,11 +10,11 @@ import org.apache.avro.specific.SpecificData;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -1731879413857157257L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroGraphMetadata\",\"namespace\":\"edu.sjsu.mithai.data\",\"fields\":[{\"name\":\"deviceId\",\"type\":\"string\"},{\"name\":\"connectedDevices\",\"type\":{\"type\":\"array\",\"items\":\"string\"}},{\"name\":\"localGraph\",\"type\":{\"type\":\"array\",\"items\":\"AvroGraphMetadata\"}}]}");
+  private static final long serialVersionUID = 800324582428011975L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroGraphMetadata\",\"namespace\":\"edu.sjsu.mithai.data\",\"fields\":[{\"name\":\"deviceId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"connectedDevices\",\"type\":[\"null\",{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]},{\"name\":\"localGraph\",\"type\":[\"null\",{\"type\":\"array\",\"items\":\"AvroGraphMetadata\"}]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-  @Deprecated public java.lang.CharSequence deviceId;
-  @Deprecated public java.util.List<java.lang.CharSequence> connectedDevices;
+  @Deprecated public java.lang.String deviceId;
+  @Deprecated public java.util.List<java.lang.String> connectedDevices;
   @Deprecated public java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata> localGraph;
 
   /**
@@ -30,7 +30,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
    * @param connectedDevices The new value for connectedDevices
    * @param localGraph The new value for localGraph
    */
-  public AvroGraphMetadata(java.lang.CharSequence deviceId, java.util.List<java.lang.CharSequence> connectedDevices, java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata> localGraph) {
+  public AvroGraphMetadata(java.lang.String deviceId, java.util.List<java.lang.String> connectedDevices, java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata> localGraph) {
     this.deviceId = deviceId;
     this.connectedDevices = connectedDevices;
     this.localGraph = localGraph;
@@ -51,8 +51,8 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: deviceId = (java.lang.CharSequence)value$; break;
-    case 1: connectedDevices = (java.util.List<java.lang.CharSequence>)value$; break;
+    case 0: deviceId = (java.lang.String)value$; break;
+    case 1: connectedDevices = (java.util.List<java.lang.String>)value$; break;
     case 2: localGraph = (java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata>)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -62,7 +62,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
    * Gets the value of the 'deviceId' field.
    * @return The value of the 'deviceId' field.
    */
-  public java.lang.CharSequence getDeviceId() {
+  public java.lang.String getDeviceId() {
     return deviceId;
   }
 
@@ -70,7 +70,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
    * Sets the value of the 'deviceId' field.
    * @param value the value to set.
    */
-  public void setDeviceId(java.lang.CharSequence value) {
+  public void setDeviceId(java.lang.String value) {
     this.deviceId = value;
   }
 
@@ -78,7 +78,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
    * Gets the value of the 'connectedDevices' field.
    * @return The value of the 'connectedDevices' field.
    */
-  public java.util.List<java.lang.CharSequence> getConnectedDevices() {
+  public java.util.List<java.lang.String> getConnectedDevices() {
     return connectedDevices;
   }
 
@@ -86,7 +86,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
    * Sets the value of the 'connectedDevices' field.
    * @param value the value to set.
    */
-  public void setConnectedDevices(java.util.List<java.lang.CharSequence> value) {
+  public void setConnectedDevices(java.util.List<java.lang.String> value) {
     this.connectedDevices = value;
   }
 
@@ -138,8 +138,8 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<AvroGraphMetadata>
     implements org.apache.avro.data.RecordBuilder<AvroGraphMetadata> {
 
-    private java.lang.CharSequence deviceId;
-    private java.util.List<java.lang.CharSequence> connectedDevices;
+    private java.lang.String deviceId;
+    private java.util.List<java.lang.String> connectedDevices;
     private java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata> localGraph;
 
     /** Creates a new Builder */
@@ -191,7 +191,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
       * Gets the value of the 'deviceId' field.
       * @return The value.
       */
-    public java.lang.CharSequence getDeviceId() {
+    public java.lang.String getDeviceId() {
       return deviceId;
     }
 
@@ -200,7 +200,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
       * @param value The value of 'deviceId'.
       * @return This builder.
       */
-    public edu.sjsu.mithai.data.AvroGraphMetadata.Builder setDeviceId(java.lang.CharSequence value) {
+    public edu.sjsu.mithai.data.AvroGraphMetadata.Builder setDeviceId(java.lang.String value) {
       validate(fields()[0], value);
       this.deviceId = value;
       fieldSetFlags()[0] = true;
@@ -230,7 +230,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
       * Gets the value of the 'connectedDevices' field.
       * @return The value.
       */
-    public java.util.List<java.lang.CharSequence> getConnectedDevices() {
+    public java.util.List<java.lang.String> getConnectedDevices() {
       return connectedDevices;
     }
 
@@ -239,7 +239,7 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
       * @param value The value of 'connectedDevices'.
       * @return This builder.
       */
-    public edu.sjsu.mithai.data.AvroGraphMetadata.Builder setConnectedDevices(java.util.List<java.lang.CharSequence> value) {
+    public edu.sjsu.mithai.data.AvroGraphMetadata.Builder setConnectedDevices(java.util.List<java.lang.String> value) {
       validate(fields()[1], value);
       this.connectedDevices = value;
       fieldSetFlags()[1] = true;
@@ -308,8 +308,8 @@ public class AvroGraphMetadata extends org.apache.avro.specific.SpecificRecordBa
     public AvroGraphMetadata build() {
       try {
         AvroGraphMetadata record = new AvroGraphMetadata();
-        record.deviceId = fieldSetFlags()[0] ? this.deviceId : (java.lang.CharSequence) defaultValue(fields()[0]);
-        record.connectedDevices = fieldSetFlags()[1] ? this.connectedDevices : (java.util.List<java.lang.CharSequence>) defaultValue(fields()[1]);
+        record.deviceId = fieldSetFlags()[0] ? this.deviceId : (java.lang.String) defaultValue(fields()[0]);
+        record.connectedDevices = fieldSetFlags()[1] ? this.connectedDevices : (java.util.List<java.lang.String>) defaultValue(fields()[1]);
         record.localGraph = fieldSetFlags()[2] ? this.localGraph : (java.util.List<edu.sjsu.mithai.data.AvroGraphMetadata>) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {

@@ -2,6 +2,7 @@ package edu.sjsu.mithai.data;
 
 import edu.sjsu.mithai.sensors.IDevice;
 import edu.sjsu.mithai.util.BaseTest;
+import edu.sjsu.mithai.util.TaskManager;
 
 import java.io.IOException;
 import java.util.Random;
@@ -47,6 +48,7 @@ public class DataGenerationTaskTest extends BaseTest {
         });
 
         DataGenerationTask task = new DataGenerationTask(config, sensorStore);
+        TaskManager.getInstance().submitTask(task);
         stopAfter(45);
     }
 }
