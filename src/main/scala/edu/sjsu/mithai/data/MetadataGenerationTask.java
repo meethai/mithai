@@ -26,6 +26,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         this.publisher = new MQTTPublisher(configuration.getProperty(MithaiProperties.MQTT_BROKER));
         this.gson = new Gson();
         this.avro = new AvroSerializationHelper();
+
         try {
             avro.loadSchema("metadata.json");
         } catch (IOException e) {
@@ -49,13 +50,14 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         JsonParser parser = new JsonParser();
         JsonElement graph = parser.parse(localGraph);
 
+        List<AvroGraphMetadata> localGraphList = new ArrayList<>();
         if (graph.isJsonArray()) {
 
             List<GraphMetadata> metadataList = new ArrayList<>();
             graph.getAsJsonArray().forEach(t -> {
                 t.getAsJsonObject();
                 System.out.println(t.getAsJsonObject());
-                t.getAsJsonObject();
+                localGraphList.add(gson.fromJson(t, AvroGraphMetadata.class));
             });
         }
 
@@ -72,10 +74,10 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         }
 
         metadata.setConnectedDevices(connectedDevices);
-        metadata.setLocalGraph(new ArrayList<>());
+        metadata.setLocalGraph(localGraphList);
 
         try {
-            publisher.sendDataToTopic(avro.serialize(metadata), "metadata");
+            publisher.sendDataToTopic(avro.serialize(metadata), TOPIC);
         } catch (Exception e) {
             e.printStackTrace();
         }

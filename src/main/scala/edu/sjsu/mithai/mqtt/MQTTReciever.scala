@@ -33,12 +33,11 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String, val ssc : Stream
 
   val gp = new GraphProc
 
-  private val stream = streamingObject.getStream(brokerUrl, topic)
   stream.foreachRDD(r => {
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     //TODO sendToGraphProcessor(data)
     data.foreach(println)
-    val graph = gc.createGraph(data.map(_.toString),streamingObject.ssc.sparkContext)
+    val graph = gc.createGraph(data.map(_.toString),ssc.sparkContext)
     gp.process(graph)
 
   })
@@ -95,11 +94,11 @@ object MQTTReciever {
     val mr = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ssc)
 
     val metadataReciever = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), "metadata", ssc)
-    val metadataSerializer = new AvroSerializationHelper
+    val metadataSerializer = new AvroSerializationHelper()
     metadataSerializer.loadSchema("metadata.json")
     metadataReciever.setSerializationHelper(metadataSerializer)
     metadataReciever.start()
-    val avro = new AvroSerializationHelper
+    val avro = new AvroSerializationHelper()
     avro.loadSchema("sensor.json")
     mr.setSerializationHelper(avro)
     mr.start()
