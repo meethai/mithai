@@ -27,7 +27,7 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 
   private var data: List[D] = _
 
-  private val streamingObject = new StreamingObject("MQTTReceiver@" + brokerUrl + "-" + topic)
+  private val streamingObject = StreamingObject
 
   val gc = new GraphCreator
 
@@ -77,12 +77,17 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
   }
 
 }
-
-class StreamingObject(appName: String = "MQTTReceiver") {
+//TODO: add service to manage spark context
+object StreamingObject{
+  val appName: String = "MQTTReceiver"
   val sparkConf = new SparkConf()
     .setAppName(appName)
-    .setMaster("local[2]")
+    .setMaster("local[20]")
   sparkConf.set("spark.scheduler.mode", "FAIR")
+  sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+  sparkConf.registerKryoClasses(Array(classOf[org.apache.avro.generic.GenericData.Record],
+    classOf[org.apache.avro.generic.GenericRecord]))
+
   val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
 
   def getStream(brokerUrl: String, topic: String) = MQTTUtils.createStream(ssc, brokerUrl, topic)

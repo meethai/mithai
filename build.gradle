@@ -34,6 +34,7 @@ task initSourceFolders { // add << before { to prevent executing during configur
 }
 
 task fatJar(type: Jar, dependsOn: clean) {
+    destinationDir = file("./deployable")
     zip64 true
     manifest {
         attributes 'Main-Class': 'edu.sjsu.mithai.main.Mithai'
@@ -56,6 +57,7 @@ buildscript {
 }
 
 jar {
+    destinationDir = file("./deployable")
     manifest {
         attributes 'Main-Class': 'edu.sjsu.mithai.main.Mithai'
     }
@@ -66,13 +68,6 @@ jar {
         exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
 
-    uploadArchives {
-        repositories {
-            flatDir {
-                dirs 'depolyable'
-            }
-        }
-    }
 }
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -112,7 +107,7 @@ dependencies {
 idea {
 
     //if you want parts of paths in resulting files (*.iml, etc.) to be replaced by variables (Files)
-    pathVariables GRADLE_HOME: file('~/cool-software/gradle')
+    //pathVariables GRADLE_HOME: file('~/cool-software/gradle')
 
     module {
 
