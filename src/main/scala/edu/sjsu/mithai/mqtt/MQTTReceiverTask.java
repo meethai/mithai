@@ -5,6 +5,7 @@ import edu.sjsu.mithai.data.AvroSerializationHelper;
 import edu.sjsu.mithai.util.StoppableRunnableTask;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.log4j.Logger;
+import scala.reflect.ClassTag$;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class MQTTReceiverTask extends StoppableRunnableTask {
     @Override
     public void run() {
         logger.debug("Mqtt reciever running....");
-        reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC));
+        reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
         AvroSerializationHelper av = new AvroSerializationHelper();
         try {
             av.loadSchema("sensor.json");

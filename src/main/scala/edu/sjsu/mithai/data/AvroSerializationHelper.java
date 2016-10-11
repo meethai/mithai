@@ -1,9 +1,9 @@
 package edu.sjsu.mithai.data;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
-import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.log4j.Logger;
 
@@ -67,7 +67,7 @@ public class AvroSerializationHelper implements SerializationHelper<GenericRecor
     public GenericRecord deserialize(String data) throws Exception{
         byte[] bytes = Base64.getDecoder().decode(data.getBytes());
 
-        SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
+        DatumReader<GenericRecord> reader = new GenericDatumReader<>(schema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
         GenericRecord record = reader.read(null, decoder);
         return record;
