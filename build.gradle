@@ -33,38 +33,15 @@ task initSourceFolders { // add << before { to prevent executing during configur
     sourceSets*.resources.srcDirs*.each { it.mkdirs() }
 }
 
-task runSparkServer(type: JavaExec, dependsOn: classes) {
-    main = 'edu.sjsu.mithai.reciever.NetworkWordCount'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-    args = [sparkHost, sparkPort]
-}
-
-task runMqttPublisher(type: JavaExec, dependsOn: classes) {
-    main = 'edu.sjsu.mithai.mqtt.MQTTPublisher'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-    args = [mosquitoURL, mosquitoTopic]
-}
-
-task runMqttReciever(type: JavaExec, dependsOn: classes) {
-    main = 'edu.sjsu.mithai.mqtt.MQTTReciever'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-    args = [mosquitoURL, mosquitoTopic]
-}
-
-task runGraphCreator(type: JavaExec, dependsOn: classes) {
-    main = 'edu.sjsu.mithai.graphX.GraphCreator'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-}
-
-task runMqttClient(type: JavaExec, dependsOn: classes) {
-    main = 'edu.sjsu.mithai.sensors.Client'
-    classpath sourceSets.main.runtimeClasspath
-    classpath configurations.runtime
-//    args = [mosquitoURL, mosquitoTopic]
+task fatJar(type: Jar, dependsOn: clean) {
+    zip64 true
+    manifest {
+        attributes 'Main-Class': 'edu.sjsu.mithai.main.Mithai'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
 buildscript {
@@ -78,7 +55,25 @@ buildscript {
     }
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.sjsu.mithai.main.Mithai'
+    }
+    doFirst {
+        zip64 true
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+
+    uploadArchives {
+        repositories {
+            flatDir {
+                dirs 'depolyable'
+            }
+        }
+    }
+}
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
@@ -99,9 +94,6 @@ dependencies {
     compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
     // https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common
     compile group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.7.3'
-    // https://mvnrepository.com/artifact/org.apache.spark/spark-graphx_2.10
-    // compile group: 'org.apache.spark', name: 'spark-graphx_2.10', version: '2.0.0' - dependency added to lib for fixing compiliation with scala 11.8
-    // https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.10
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.10
     compile group: 'org.apache.kafka', name: 'kafka_2.10', version: '0.10.0.1'
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
@@ -123,29 +115,9 @@ idea {
     pathVariables GRADLE_HOME: file('~/cool-software/gradle')
 
     module {
-        //if for some reason you want to add an extra sourceDirs
-//        sourceDirs += file('some-extra-source-folder')
-        //and some extra test source dirs
-//        testSourceDirs += file('some-extra-test-dir')
-        //and hint to mark some of existing source dirs as generated sources
-//        generatedSourceDirs += file('some-extra-source-folder')
-        //and some extra dirs that should be excluded by IDEA
-//        excludeDirs += file('some-extra-exclude-dir')
-        //if you don't like the name Gradle has chosen
-//        name = 'some-better-name'
-        //if you prefer different output folders
-//        inheritOutputDirs = false
-//        outputDir = file('muchBetterOutputDir')
-//        testOutputDir = file('muchBetterTestOutputDir')
-        //if you prefer different SDK than the one inherited from IDEA project
-//        jdkName = '1.6'
-        //if you need to put 'provided' dependencies on the classpath
-//        scopes.PROVIDED.plus += [ configurations.provided ]
-        //if 'content root' (as IDEA calls it) of the module is different
-//        contentRoot = file('my-module-content-root')
-        //if you love browsing Javadoc
+
         downloadJavadoc = true
-        //and hate reading sources :)
         downloadSources = true
+
     }
 }
