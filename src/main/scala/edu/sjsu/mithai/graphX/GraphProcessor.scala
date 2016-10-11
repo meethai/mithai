@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
   * Created by Madhura on 9/26/16.
   */
 
-object GraphProc {
+object GraphProcessor {
 
   def main(args: Array[String]) {
     Logger.getLogger("org").setLevel(Level.OFF)
@@ -32,7 +32,7 @@ object GraphProc {
       a += d
     }
 
-    val gp = new GraphProc()
+    val gp = new GraphProcessor()
 
     val conf = new SparkConf()
       .setAppName("GraphCreator")
@@ -47,7 +47,7 @@ object GraphProc {
 
 }
 
-class GraphProc {
+class GraphProcessor {
 
   var sparkConfig: SparkConf = _
 
@@ -58,8 +58,9 @@ class GraphProc {
 
   def process[D](graph: Graph[(D), Int]): Unit = {
 
-    println("Vertice Length: ---------->" + graph.vertices.count())
-    graph.vertices.collect().foreach(x => println(x + "<------Vertices"))
+    //todo: Accept functiona as a parameter to process graph
+    println("Vertices Length:" + graph.vertices.count())
+    graph.vertices.collect().foreach(x => println(x + " Vertex"))
     graph.edges.collect().foreach(println(_))
 
   }

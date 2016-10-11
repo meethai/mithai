@@ -6,7 +6,7 @@ package edu.sjsu.mithai.graphX
 
 import java.util
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
 
@@ -23,12 +23,12 @@ object GraphCreator {
 
 class GraphCreator {
 
-  def createGraph[D:ClassTag](vertexList: List[D], sc: SparkContext): Graph[D, PartitionID] = {
+  def createGraph[D: ClassTag](vertexList: List[D], sc: SparkContext): Graph[D, PartitionID] = {
 
     def getEdgeArrayFromVertexArray[D](va: List[(VertexId, D)]): List[Edge[PartitionID]] = {
       val edge = new ListBuffer[Edge[PartitionID]]()
       for (i <- va.indices)
-        for (j <- va.indices){
+        for (j <- va.indices) {
           if (i != j)
             edge += Edge(i.toLong, j.toLong, 1)
         }
@@ -36,12 +36,12 @@ class GraphCreator {
     }
 
     def getVertexArrayFromArrayList[D](al: List[D]): List[(VertexId, D)] = {
-      val v = new ListBuffer[(VertexId,D)]()
-     var curr: Long = 0L
+      val v = new ListBuffer[(VertexId, D)]()
+      var curr: Long = 0L
       al.foreach(
         s => {
           curr += 1
-          v.add((curr,s))
+          v.add((curr, s))
         }
       )
       return v.toList

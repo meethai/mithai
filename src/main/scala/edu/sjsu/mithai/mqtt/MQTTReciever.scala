@@ -4,7 +4,7 @@ package edu.sjsu.mithai.mqtt
 import edu.sjsu.mithai.config.Configuration
 import edu.sjsu.mithai.config.MithaiProperties._
 import edu.sjsu.mithai.data.{AvroSerializationHelper, SerializationHelper}
-import edu.sjsu.mithai.graphX.{GraphCreator, GraphProc}
+import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
@@ -31,7 +31,7 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 
   val gc = new GraphCreator
 
-  val gp = new GraphProc
+  val gp = new GraphProcessor
 
   private val stream = streamingObject.getStream(brokerUrl, topic)
   stream.foreachRDD(r => {
