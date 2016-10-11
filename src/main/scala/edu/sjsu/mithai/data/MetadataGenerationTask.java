@@ -8,8 +8,8 @@ import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.mqtt.MQTTPublisher;
 import edu.sjsu.mithai.util.StoppableExecutableTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 public class MetadataGenerationTask extends StoppableExecutableTask {
@@ -19,11 +19,19 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
     private Configuration configuration;
     private MQTTPublisher publisher;
     private int sendCount;
+    private AvroSerializationHelper avro;
 
     public MetadataGenerationTask(Configuration configuration) {
         this.configuration = configuration;
         this.publisher = new MQTTPublisher(configuration.getProperty(MithaiProperties.MQTT_BROKER));
         this.gson = new Gson();
+        this.avro = new AvroSerializationHelper();
+
+        try {
+            avro.loadSchema("metadata.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -33,7 +41,8 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
             stop();
         }
 
-        GraphMetadata metadata = new GraphMetadata(configuration.getProperty(MithaiProperties.ID));
+        AvroGraphMetadata metadata = new AvroGraphMetadata();
+        metadata.setDeviceId(configuration.getProperty(MithaiProperties.ID));
         String connectedDeviceIds = configuration.getProperty(MithaiProperties.CONNECTED_DEVICE_IDS);
 
         String localGraph = configuration.getProperty(MithaiProperties.LOCAL_GRAPH);
@@ -41,15 +50,17 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         JsonParser parser = new JsonParser();
         JsonElement graph = parser.parse(localGraph);
 
+        List<AvroGraphMetadata> localGraphList = new ArrayList<>();
         if (graph.isJsonArray()) {
 
             List<GraphMetadata> metadataList = new ArrayList<>();
             graph.getAsJsonArray().forEach(t -> {
                 t.getAsJsonObject();
                 System.out.println(t.getAsJsonObject());
-                t.getAsJsonObject();
+                localGraphList.add(gson.fromJson(t, AvroGraphMetadata.class));
             });
         }
+
         List<String> connectedDevices = new ArrayList<>();
 
         if (connectedDeviceIds != null && !connectedDeviceIds.trim().isEmpty()) {
@@ -63,10 +74,16 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         }
 
         metadata.setConnectedDevices(connectedDevices);
-        publisher.sendDataToTopic(Base64.getEncoder().encodeToString(gson.toJson(metadata).getBytes()), "metadata");
+        metadata.setLocalGraph(localGraphList);
 
         try {
-            Thread.sleep(1000);
+            publisher.sendDataToTopic(avro.serialize(metadata), TOPIC);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
