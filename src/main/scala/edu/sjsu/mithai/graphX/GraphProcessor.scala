@@ -1,9 +1,11 @@
 package edu.sjsu.mithai.graphX
 
-import java.util
-
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx._
 import org.apache.spark.{SparkConf, SparkContext}
+
+import scala.collection.mutable.ListBuffer
+
 
 /**
   * Created by Madhura on 9/26/16.
@@ -12,55 +14,55 @@ import org.apache.spark.{SparkConf, SparkContext}
 object GraphProc {
 
   def main(args: Array[String]) {
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
+
+    class SomeData extends Serializable {
+      var data: Int = _
+
+      override def toString: String = {
+        "{ data= " + data + " }"
+      }
+    }
+
+    var a = new ListBuffer[SomeData]
+    for (i <- 0 to 10) {
+      val d = new SomeData
+      d.data = i
+      a += d
+    }
+
     val gp = new GraphProc()
 
     val conf = new SparkConf()
       .setAppName("GraphCreator")
       .setMaster("local[2]")
 
-    gp.gProcessor(conf)
+    val sc = new SparkContext(conf)
+
+    val gc = new GraphCreator
+
+    gp.process(gc.createGraph(a.toList, sc))
   }
 
 }
 
 class GraphProc {
 
-  def gProcessor(conf: SparkConf) {
+  var sparkConfig: SparkConf = _
 
-    val sc = new SparkContext(conf)
+  def setSparkConf(conf: SparkConf): Unit = {
 
-    val vertex: util.ArrayList[String] = new util.ArrayList[String]
-    vertex.add("{\"sensor1\",\"100\"}")
-    vertex.add("{\"sensor2\",\"200\"}")
-    vertex.add("{\"sensor3\",\"300\"}")
-    vertex.add("{\"sensor4\",\"400\"}")
-    vertex.add("{\"sensor5\",\"500\"}")
-    vertex.add("{\"sensor6\",\"600\"}")
-
-    //generated graph
-    val graph = new GraphCreator().createGraph(vertex, sc)
-
-    //TODO: Add graph processing functions
-    for ((id, (sensor)) <- graph.vertices.filter { case (id, (sensor)) => id > 0L }.collect) {
-      println(s"$id is $sensor")
-    }
-
-    //Function to collect Neighbor Ids for each vertex
-    val v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
-    graph.aggregateMessages[Int](x => x.sendToDst(1), _ + _, TripletFields.None)
-    print(s"-----------------------------------------------------------------------")
-    v.collect().foreach(x => print(x._1 + "\nVertexRDD\n"))
-
-
+    sparkConfig = conf
   }
 
-  def processMe(graph: Graph[(String), Int]): Unit ={
-    val v = graph.collectNeighborIds(edgeDirection = EdgeDirection.Either)
-    graph.aggregateMessages[Int](x => x.sendToDst(1), _ + _, TripletFields.None)
-    print(s"-----------------------------------------------------------------------")
-    v.collect().foreach(x => print(x._1 + "\nVertexRDD\n"))
-  }
+  def process[D](graph: Graph[(D), Int]): Unit = {
 
+    println("Vertice Length: ---------->" + graph.vertices.count())
+    graph.vertices.collect().foreach(x => println(x + "<------Vertices"))
+    graph.edges.collect().foreach(println(_))
+
+  }
 }
 
 

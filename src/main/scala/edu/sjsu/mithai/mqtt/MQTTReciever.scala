@@ -6,16 +6,20 @@ import edu.sjsu.mithai.config.MithaiProperties._
 import edu.sjsu.mithai.data.{AvroSerializationHelper, SerializationHelper}
 import edu.sjsu.mithai.graphX.{GraphCreator, GraphProc}
 import org.apache.avro.generic.GenericRecord
-import org.apache.log4j.Logger
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
+import scala.reflect.ClassTag
+
 /**
   * Created by kaustubh on 9/17/16.
   */
-class MQTTReciever[D](val brokerUrl: String, val topic: String) {
+class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(this.getClass)
+  Logger.getLogger("org").setLevel(Level.OFF)
+  Logger.getLogger("akka").setLevel(Level.OFF)
 
   private var _serializationHelper: SerializationHelper[D] = _
 
@@ -33,9 +37,9 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String) {
   stream.foreachRDD(r => {
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     //TODO sendToGraphProcessor(data)
-    data.foreach(println)
-    val graph = gc.createGraph(data.map(_.toString),streamingObject.ssc.sparkContext)
-    gp.processMe(graph)
+    //data.foreach(x=>println(x+"<--mb rocks"))
+    val graph = gc.createGraph(data,streamingObject.ssc.sparkContext)
+    gp.process(graph)
 
   })
 
@@ -78,7 +82,7 @@ class StreamingObject(appName: String = "MQTTReceiver") {
   val sparkConf = new SparkConf()
     .setAppName(appName)
     .setMaster("local[2]")
-
+  sparkConf.set("spark.scheduler.mode", "FAIR")
   val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
 
   def getStream(brokerUrl: String, topic: String) = MQTTUtils.createStream(ssc, brokerUrl, topic)

@@ -21,7 +21,7 @@ public class GraphTask extends StoppableExecutableTask {
     @Override
     public void execute() {
         System.out.println("Hello world!");
-        gp.gProcessor(conf);
+        gp.setSparkConf(conf);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
