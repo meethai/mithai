@@ -69,6 +69,11 @@ jar {
     }
 
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.1'
+}
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
