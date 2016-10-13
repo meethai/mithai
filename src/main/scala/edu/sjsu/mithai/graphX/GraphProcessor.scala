@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.graphX
 
+import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx._
 import org.apache.spark.{SparkConf, SparkContext}
@@ -42,18 +43,39 @@ object GraphProcessor {
 
     val gc = new GraphCreator
 
-    gp.process(gc.createGraph(a.toList, sc))
+//    gp.process(gc.createGraph(a.toList, sc))
   }
 
 }
 
 class GraphProcessor {
 
+
+
   var sparkConfig: SparkConf = _
 
   def setSparkConf(conf: SparkConf): Unit = {
 
-    sparkConfig = conf
+   sparkConfig = conf
+  }
+
+  def mapAttributes(graph: Graph[(String, Double), PartitionID], record: GenericRecord): Graph[(String, Double), PartitionID] = {
+
+    println(record.get("id"))
+    println(record.get(""))
+
+    val newGraph : Graph[(String, Double), PartitionID] = graph.mapVertices((id,attr) => {
+
+      var x: (String, Double) = ("", 0)
+      if (record.get("id").hashCode() == id)
+        x = (record.get("id").toString, record.get("value").asInstanceOf[Double]);
+      else
+        x = (attr)
+      x
+    })
+
+      newGraph.vertices.collect().foreach(x=> println("Graph Attribute---->>"+x))
+    return newGraph
   }
 
   def process[D](graph: Graph[(D), Int]): Unit = {

@@ -46,7 +46,7 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 

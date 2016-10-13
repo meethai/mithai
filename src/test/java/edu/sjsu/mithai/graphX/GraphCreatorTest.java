@@ -2,13 +2,21 @@ package edu.sjsu.mithai.graphX;
 
 import edu.sjsu.mithai.data.AvroGraphMetadata;
 import edu.sjsu.mithai.spark.SparkStreamingObject;
+import edu.sjsu.mithai.util.BaseTest;
 import org.apache.spark.graphx.Graph;
 import org.junit.Test;
+import scala.Tuple2;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphCreatorTest {
+public class GraphCreatorTest extends BaseTest {
+
+
+    public GraphCreatorTest() throws IOException {
+    }
+
     @Test
     public void createMetaDataGraph() throws Exception {
         AvroGraphMetadata metadata = new AvroGraphMetadata();
@@ -48,11 +56,14 @@ public class GraphCreatorTest {
 
         GraphCreator creator = new GraphCreator();
 
-        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
+        Graph<Tuple2<String, Object>, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
         System.out.println(metaDataGraph);
+
+        GraphProcessor gp = new GraphProcessor();
+//        gp.mapAttributes(metaDataGraph);
     }
 
-    @Test
+//    @Test
     public void createMetaDataGraph2() throws Exception {
         AvroGraphMetadata metadata = new AvroGraphMetadata();
 
@@ -91,8 +102,22 @@ public class GraphCreatorTest {
 
         GraphCreator creator = new GraphCreator();
 
-        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
-        System.out.println(metaDataGraph);
+//        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
+//        System.out.println(metaDataGraph);
     }
 
+    @Override
+    public void test() throws Exception {
+        createMetaDataGraph();
+    }
+
+    public static void main(String[] args) throws IOException {
+        GraphCreatorTest test = new GraphCreatorTest();
+        try {
+            test.test();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

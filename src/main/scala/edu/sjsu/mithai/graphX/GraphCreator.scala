@@ -58,21 +58,21 @@ class GraphCreator {
     return v.toList
   }
 
-  def createMetaDataGraph(agm:AvroGraphMetadata , sc:SparkContext):Graph[String,PartitionID]={
+  def createMetaDataGraph(agm:AvroGraphMetadata , sc:SparkContext):Graph[(String, Double),PartitionID]={
     var edges = new ListBuffer[Edge[PartitionID]]
-    var vert = new util.HashSet[(VertexId,String)]()
+    var vert = new util.HashSet[(VertexId, (String, Double))]()
     agm.getLocalGraph.toList.foreach(p=>{
       p.getConnectedDevices.toList.foreach(x=>{
         edges+= Edge(p.getDeviceId.hashCode,x.hashCode)
-        vert.add((x.hashCode,x))
+        vert.add((x.hashCode,(x, 0)))
       })
-      vert.add(p.getDeviceId.hashCode,p.getDeviceId)
+      vert.add(p.getDeviceId.hashCode,(p.getDeviceId, 0))
     })
 
-    val vertexRD: RDD[(VertexId, String)] = sc.parallelize(vert.toList)
+    val vertexRD: RDD[(VertexId, (String, Double))] = sc.parallelize(vert.toList)
     val edgeRDD: RDD[Edge[PartitionID]] = sc.parallelize(edges)
     //TODO: parameterize ED-edge attribute type if possible
-    val graph: Graph[String, PartitionID] = Graph(vertexRD, edgeRDD)
+    val graph: Graph[(String, Double), PartitionID] = Graph(vertexRD, edgeRDD)
 
     println("Graph in scala:")
     graph.vertices.collect().foreach(x=>println(x+"<--metaVertex"))
