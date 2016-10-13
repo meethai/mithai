@@ -1,6 +1,5 @@
 package edu.sjsu.mithai.data;
 
-import edu.sjsu.mithai.mqtt.SimpleMqttReceiver;
 import edu.sjsu.mithai.util.BaseTest;
 import edu.sjsu.mithai.util.TaskManager;
 
@@ -28,11 +27,11 @@ public class MetadataGenerationTaskTest extends BaseTest {
     @Override
     public void test() throws Exception {
         MetadataGenerationTask task = new MetadataGenerationTask(config);
-        SimpleMqttReceiver receiver = new SimpleMqttReceiver(config);
+//        SimpleMqttReceiver receiver = new SimpleMqttReceiver(config);
 
         TaskManager.getInstance().submitTask(task);
         stopAfter(45);
-        receiver.getClient().disconnect(1000);
-        receiver.getClient().close();
+//        receiver.getClient().disconnect(1000);
+//        receiver.getClient().close();
     }
 }

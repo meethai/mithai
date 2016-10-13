@@ -1,7 +1,7 @@
 package client;
 
 import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.mqtt.MQTTReceiverTask;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.util.TaskManager;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class Main {
 
         try {
             Configuration config = new Configuration(Main.class.getClassLoader().getResource("application.properties").getFile());
-            TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
+            TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(config));
         } catch (IOException e) {
             e.printStackTrace();
         }

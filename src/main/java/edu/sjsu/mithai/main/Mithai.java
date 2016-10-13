@@ -6,8 +6,8 @@ import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
-import edu.sjsu.mithai.mqtt.MQTTReceiverTask;
-import edu.sjsu.mithai.mqtt.SimpleMqttReceiver;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
+import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.util.TaskManager;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -42,13 +42,15 @@ public class Mithai implements Observer {
         //Start tasks here
         TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
-        TaskManager.getInstance().submitTask(new MQTTReceiverTask(configuration));
+        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+
+        TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
 
         TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-        SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
+       // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
 
 //        // Stop all tasks and wait 60 seconds to finish them
