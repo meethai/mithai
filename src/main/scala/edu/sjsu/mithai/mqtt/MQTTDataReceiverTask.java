@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import scala.reflect.ClassTag$;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
@@ -28,8 +29,10 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
         dataReciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
         AvroSerializationHelper av = new AvroSerializationHelper();
         try {
-            av.loadSchema("../sensor.json");
+            av.loadSchema("sensor.json");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         dataReciever.setSerializationHelper(av);
