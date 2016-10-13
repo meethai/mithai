@@ -12,33 +12,33 @@ import java.io.IOException;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
 
-public class MQTTReceiverTask extends StoppableRunnableTask {
+public class MQTTDataReceiverTask extends StoppableRunnableTask {
 
-    private static Logger logger = Logger.getLogger(MQTTReceiverTask.class);
-    private MQTTReciever reciever;
+    private static Logger logger = Logger.getLogger(MQTTDataReceiverTask.class);
+    private MQTTReciever dataReciever;
     private Configuration config;
 
-    public MQTTReceiverTask(Configuration config) {
+    public MQTTDataReceiverTask(Configuration config) {
         this.config = config;
     }
 
     @Override
     public void run() {
-        logger.debug("Mqtt reciever running....");
-        reciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
+        logger.debug("Mqtt dataReciever running....");
+        dataReciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
         AvroSerializationHelper av = new AvroSerializationHelper();
         try {
             av.loadSchema("sensor.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        reciever.setSerializationHelper(av);
-        reciever.start();
+        dataReciever.setSerializationHelper(av);
+        dataReciever.start();
     }
 
     @Override
     public void stop() {
         logger.debug("stopping...");
-        reciever.stop(true);
+        dataReciever.stop(true);
     }
 }

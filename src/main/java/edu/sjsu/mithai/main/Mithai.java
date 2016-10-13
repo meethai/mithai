@@ -6,11 +6,12 @@ import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
-import edu.sjsu.mithai.mqtt.MQTTReceiverTask;
-import edu.sjsu.mithai.mqtt.SimpleMqttReceiver;
+import edu.sjsu.mithai.export.ExporterTask;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
+import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
+import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -23,17 +24,16 @@ public class Mithai implements Observer {
     private static Configuration configuration;
     private SensorStore sensorStore;
 
-    public static void main(String[] args) throws IOException, InterruptedException, MqttException {
+    public static void main(String[] args) throws Exception {
         Mithai mithai = new Mithai();
-        mithai.start();
+        mithai.start(args[0]);
     }
 
-    private void start() throws IOException, MqttException {
+    private void start(String arg) throws Exception {
         ConfigFileObservable.getInstance().addObserver(this);
 
         //TODO file path will be provided by user
-        configuration = new Configuration(Thread.currentThread().getContextClassLoader()
-                .getResource("application.properties").getFile());
+        configuration = new Configuration(arg);
 
         sensorStore = new SensorStore();
 
@@ -42,13 +42,17 @@ public class Mithai implements Observer {
         //Start tasks here
         TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
-        TaskManager.getInstance().submitTask(new MQTTReceiverTask(configuration));
+        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
 
-        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+        TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
+
+//        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-        SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
+        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+
+       // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
 
 //        // Stop all tasks and wait 60 seconds to finish them
