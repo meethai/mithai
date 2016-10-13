@@ -8,30 +8,23 @@ import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.mqtt.MQTTPublisher;
 import edu.sjsu.mithai.util.StoppableExecutableTask;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MetadataGenerationTask extends StoppableExecutableTask {
     private static final String TOPIC = "metadata";
-    private static final int RESEND_COUNT = 3;
+    private static final int RESEND_COUNT = 300;
     private final Gson gson;
     private Configuration configuration;
     private MQTTPublisher publisher;
     private int sendCount;
-    private AvroSerializationHelper avro;
+    private AvroMetadataSerializationHelper avro;
 
     public MetadataGenerationTask(Configuration configuration) {
         this.configuration = configuration;
         this.publisher = new MQTTPublisher(configuration.getProperty(MithaiProperties.MQTT_BROKER));
         this.gson = new Gson();
-        this.avro = new AvroSerializationHelper();
-
-        try {
-            avro.loadSchema("metadata.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.avro = new AvroMetadataSerializationHelper();
     }
 
     @Override
@@ -83,7 +76,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         }
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

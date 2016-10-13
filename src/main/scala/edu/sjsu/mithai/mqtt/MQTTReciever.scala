@@ -4,8 +4,9 @@ package edu.sjsu.mithai.mqtt
 import edu.sjsu.mithai.config.Configuration
 import edu.sjsu.mithai.config.MithaiProperties._
 import edu.sjsu.mithai.data.{AvroGraphMetadata, AvroSerializationHelper, GenericSerializationHelper, SerializationHelper}
+import edu.sjsu.mithai.export.ExportMessage
 import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
-import edu.sjsu.mithai.spark.SparkStreamingObject
+import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
 
@@ -33,11 +34,21 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
   val gp = new GraphProcessor
 
   stream.foreachRDD(r => {
+    r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     //TODO sendToGraphProcessor(data)
-    data.foreach(x=>println(x+"<--mb rocks"))
-    val graph = gc.createGraph(data,streamingObject.sparkContext)
-    gp.process(graph)
+//    data.foreach(x=>println(x+"<--"))
+    data.foreach(x=>{
+      Store.messageStore.addMessage(new ExportMessage(x.toString))
+      if(x.isInstanceOf[AvroGraphMetadata]){
+        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
+      }
+
+    })
+
+      val graph = gc.createGraph(data, streamingObject.sparkContext)
+
+//    gp.process(graph)
 
   })
 

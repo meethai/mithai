@@ -6,6 +6,7 @@ package edu.sjsu.mithai.graphX
 
 import java.util
 
+import edu.sjsu.mithai.data.AvroGraphMetadata
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
@@ -24,35 +25,58 @@ object GraphCreator {
 class GraphCreator {
 
   def createGraph[D: ClassTag](vertexList: List[D], sc: SparkContext): Graph[D, PartitionID] = {
-
-    def getEdgeArrayFromVertexArray[D](va: List[(VertexId, D)]): List[Edge[PartitionID]] = {
-      val edge = new ListBuffer[Edge[PartitionID]]()
-      for (i <- va.indices)
-        for (j <- va.indices) {
-          if (i != j)
-            edge += Edge(i.toLong, j.toLong, 1)
-        }
-      return edge.toList
-    }
-
-    def getVertexArrayFromArrayList[D](al: List[D]): List[(VertexId, D)] = {
-      val v = new ListBuffer[(VertexId, D)]()
-      var curr: Long = 0L
-      al.foreach(
-        s => {
-          curr += 1
-          v.add((curr, s))
-        }
-      )
-      return v.toList
-    }
-
     val v = getVertexArrayFromArrayList(vertexList)
     val e = getEdgeArrayFromVertexArray(v)
     val vertexRD: RDD[(VertexId, D)] = sc.parallelize(v)
     val edgeRDD: RDD[Edge[PartitionID]] = sc.parallelize(e)
     //TODO: parameterize ED-edge attribute type if possible
     val graph: Graph[D, PartitionID] = Graph(vertexRD, edgeRDD)
+
+    return graph
+
+  }
+
+  def getEdgeArrayFromVertexArray[D](va: List[(VertexId, D)]): List[Edge[PartitionID]] = {
+    val edge = new ListBuffer[Edge[PartitionID]]()
+    for (i <- va.indices)
+      for (j <- va.indices) {
+        if (i != j)
+          edge += Edge(i.toLong, j.toLong, 1)
+      }
+    return edge.toList
+  }
+
+  def getVertexArrayFromArrayList[D](al: List[D]): List[(VertexId, D)] = {
+    val v = new ListBuffer[(VertexId, D)]()
+    var curr: Long = 0L
+    al.foreach(
+      s => {
+        curr += 1
+        v.add((curr, s))
+      }
+    )
+    return v.toList
+  }
+
+  def createMetaDataGraph(agm:AvroGraphMetadata , sc:SparkContext):Graph[String,PartitionID]={
+    var edges = new ListBuffer[Edge[PartitionID]]
+    var vert = new util.HashSet[(VertexId,String)]()
+    agm.getLocalGraph.toList.foreach(p=>{
+      p.getConnectedDevices.toList.foreach(x=>{
+        edges+= Edge(p.getDeviceId.hashCode,x.hashCode)
+        vert.add((x.hashCode,x))
+      })
+      vert.add(p.getDeviceId.hashCode,p.getDeviceId)
+    })
+
+    val vertexRD: RDD[(VertexId, String)] = sc.parallelize(vert.toList)
+    val edgeRDD: RDD[Edge[PartitionID]] = sc.parallelize(edges)
+    //TODO: parameterize ED-edge attribute type if possible
+    val graph: Graph[String, PartitionID] = Graph(vertexRD, edgeRDD)
+
+    println("Graph in scala:")
+    graph.vertices.collect().foreach(x=>println(x+"<--metaVertex"))
+    graph.edges.collect().foreach(x=>println(x+"<--metaEdge"))
 
     return graph
 

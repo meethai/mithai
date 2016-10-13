@@ -1,12 +1,11 @@
 package edu.sjsu.mithai.mqtt;
 
 import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.data.AvroSerializationHelper;
+import edu.sjsu.mithai.data.AvroGraphMetadata;
+import edu.sjsu.mithai.data.AvroMetadataSerializationHelper;
 import edu.sjsu.mithai.util.StoppableRunnableTask;
 import org.apache.log4j.Logger;
 import scala.reflect.ClassTag$;
-
-import java.io.IOException;
 
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 
@@ -25,14 +24,15 @@ public class MQTTMetaDataRecieverTask extends StoppableRunnableTask {
     @Override
     public void run() {
         logger.debug("Mqtt metadataReciever running....");
-        metadataReciever = new MQTTReciever<Object>(config.getProperty(MQTT_BROKER), "metadata", ClassTag$.MODULE$.apply(Object.class));
-        AvroSerializationHelper av = new AvroSerializationHelper();
-        try {
-            av.loadSchema("metadata.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        metadataReciever.setSerializationHelper(av);
+        metadataReciever = new MQTTReciever<AvroGraphMetadata>(config.getProperty(MQTT_BROKER), "metadata", ClassTag$.MODULE$.apply(AvroGraphMetadata.class));
+        AvroMetadataSerializationHelper helper = new AvroMetadataSerializationHelper();
+//        AvroSerializationHelper av = new AvroSerializationHelper();
+//        try {
+//            av.loadSchema("metadata.json");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        metadataReciever.setSerializationHelper(helper);
         metadataReciever.start();
     }
 
