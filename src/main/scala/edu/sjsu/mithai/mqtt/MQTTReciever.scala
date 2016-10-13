@@ -4,21 +4,22 @@ package edu.sjsu.mithai.mqtt
 import edu.sjsu.mithai.config.Configuration
 import edu.sjsu.mithai.config.MithaiProperties._
 import edu.sjsu.mithai.data.{AvroSerializationHelper, SerializationHelper}
-import edu.sjsu.mithai.graphX.{GraphCreator, GraphProc}
+import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
+import scala.reflect.ClassTag
+
 /**
   * Created by kaustubh on 9/17/16.
   */
-class MQTTReciever[D](val brokerUrl: String, val topic: String, val ssc : StreamingContext) {
+class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
+  private val logger: Logger = Logger.getLogger(this.getClass)
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
-
-  private val logger: Logger = Logger.getLogger(this.getClass)
 
   private var _serializationHelper: SerializationHelper[D] = _
 
@@ -28,16 +29,16 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String, val ssc : Stream
 
   private val streamingObject = new StreamingObject("MQTTReceiver@" + brokerUrl + "-" + topic)
 
-  private val stream = streamingObject.getStream(brokerUrl, topic, ssc)
   val gc = new GraphCreator
 
-  val gp = new GraphProc
+  val gp = new GraphProcessor
 
+  private val stream = streamingObject.getStream(brokerUrl, topic)
   stream.foreachRDD(r => {
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     //TODO sendToGraphProcessor(data)
-    data.foreach(println)
-    val graph = gc.createGraph(data.map(_.toString),ssc.sparkContext)
+    //data.foreach(x=>println(x+"<--mb rocks"))
+    val graph = gc.createGraph(data,streamingObject.ssc.sparkContext)
     gp.process(graph)
 
   })
@@ -52,19 +53,19 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String, val ssc : Stream
     if (_serializationHelper == null) {
       throw new NullPointerException("SerializationHelper cannot be null in MQTTReciever")
     }
-    ssc.start()
+    streamingObject.ssc.start()
   }
 
   /**
     * This method stops the Spark Streaming (not Graceful)
     */
-  def stop(stopSparkContext: Boolean = true): Unit = ssc.stop(stopSparkContext)
+  def stop(stopSparkContext: Boolean = true): Unit = streamingObject.ssc.stop(stopSparkContext)
 
   /**
     * Wait for the execution to stop. Any exceptions that occurs during the execution
     * will be thrown in this thread.
     */
-  def awaitTermination(): Unit = ssc.awaitTermination()
+  def awaitTermination(): Unit = streamingObject.ssc.awaitTermination()
 
   /**
     * Sets the Serilization Helper required to be used for de-serializing the input stream to type D
@@ -78,31 +79,23 @@ class MQTTReciever[D](val brokerUrl: String, val topic: String, val ssc : Stream
 }
 
 class StreamingObject(appName: String = "MQTTReceiver") {
+  val sparkConf = new SparkConf()
+    .setAppName(appName)
+    .setMaster("local[2]")
+  sparkConf.set("spark.scheduler.mode", "FAIR")
+  val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
 
-  def getStream(brokerUrl: String, topic: String, ssc:StreamingContext) = MQTTUtils.createStream(ssc, brokerUrl, topic)
+  def getStream(brokerUrl: String, topic: String) = MQTTUtils.createStream(ssc, brokerUrl, topic)
 }
 
 object MQTTReciever {
   def main(args: Array[String]): Unit = {
     val config = new Configuration(getClass.getClassLoader.getResource("application.properties").getFile)
-    val sparkConf = new SparkConf()
-      .setAppName("MQTTReceiver")
-      .setMaster("local[20]")
-
-    val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(2))
-
-    val mr = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ssc)
-
-    val metadataReciever = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), "metadata", ssc)
-    val metadataSerializer = new AvroSerializationHelper()
-    metadataSerializer.loadSchema("metadata.json")
-    metadataReciever.setSerializationHelper(metadataSerializer)
-    metadataReciever.start()
-    val avro = new AvroSerializationHelper()
+    val mr = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC))
+    val avro = new AvroSerializationHelper
     avro.loadSchema("sensor.json")
     mr.setSerializationHelper(avro)
     mr.start()
     mr.awaitTermination()
-    metadataReciever.awaitTermination()
   }
 }
