@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,11 @@ public class DataGenerationTask extends StoppableExecutableTask {
         this.dataList = new ArrayList<>(sensorStore.getDevices().size());
 
         avro = new AvroSerializationHelper();
-        avro.loadSchema("sensor.json");
+        try {
+            avro.loadSchema("sensor.json");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         for (IDevice device : sensorStore.getDevices()) {
             GenericRecord record = new GenericData.Record(avro.getSchema());

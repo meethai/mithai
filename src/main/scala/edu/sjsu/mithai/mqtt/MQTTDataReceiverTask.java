@@ -28,7 +28,7 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
         dataReciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
         AvroSerializationHelper av = new AvroSerializationHelper();
         try {
-            av.loadSchema("sensor.json");
+            av.loadSchema("../sensor.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
