@@ -9,21 +9,21 @@ import java.io.IOException;
 /**
  * Created by kaustubh on 9/21/16.
  */
-public class MQTTReceiverTaskTest extends BaseTest {
+public class MQTTDataReceiverTaskTest extends BaseTest {
 
-    public MQTTReceiverTaskTest() throws IOException {
+    public MQTTDataReceiverTaskTest() throws IOException {
     }
 
     public static void main(String[] args) throws IOException {
 
-            MQTTReceiverTaskTest mr = new MQTTReceiverTaskTest();
+            MQTTDataReceiverTaskTest mr = new MQTTDataReceiverTaskTest();
             mr.test();
 
     }
 
     @Test
     public void test() {
-        TaskManager.getInstance().submitTask(new MQTTReceiverTask(config));
-        stopAfter(15);
+        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(config));
+        stopAfter(35);
     }
 }

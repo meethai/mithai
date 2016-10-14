@@ -1,16 +1,17 @@
 package edu.sjsu.mithai.data;
 
+import edu.sjsu.mithai.main.Mithai;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
-import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.Base64;
 
 public class AvroSerializationHelper implements SerializationHelper<GenericRecord>{
@@ -18,10 +19,11 @@ public class AvroSerializationHelper implements SerializationHelper<GenericRecor
     private Schema schema;
     private Logger logger = Logger.getLogger(getClass());
 
-    public void loadSchema(String schemaFile) throws IOException {
+    public void loadSchema(String schemaFile) throws IOException, URISyntaxException {
         Schema.Parser parser = new Schema.Parser();
-        URL url = getClass().getClassLoader().getResource(schemaFile);
-        this.schema = parser.parse(new File(url.getFile()));
+//        URL url = getClass().getClassLoader().getResource(schemaFile);
+        File jarfile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        this.schema = parser.parse(new File(jarfile.getParent()+"/"+schemaFile));
         logger.info(schema.getFields());
     }
 
@@ -67,7 +69,7 @@ public class AvroSerializationHelper implements SerializationHelper<GenericRecor
     public GenericRecord deserialize(String data) throws Exception{
         byte[] bytes = Base64.getDecoder().decode(data.getBytes());
 
-        SpecificDatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(schema);
+        DatumReader<GenericRecord> reader = new GenericDatumReader<>(schema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
         GenericRecord record = reader.read(null, decoder);
         return record;

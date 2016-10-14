@@ -6,7 +6,7 @@ import org.apache.spark.SparkConf;
 
 public class GraphTask extends StoppableExecutableTask {
 
-    GraphProc gp;
+    GraphProcessor gp;
 
     SparkConf conf = new SparkConf()
             .setAppName("GraphCreator")
@@ -14,14 +14,14 @@ public class GraphTask extends StoppableExecutableTask {
 
     public GraphTask() {
         // Define required variable
-        gp = new GraphProc();
+        gp = new GraphProcessor();
 
     }
 
     @Override
     public void execute() {
         System.out.println("Hello world!");
-        gp.gProcessor(conf);
+        gp.setSparkConf(conf);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {

@@ -18,7 +18,7 @@ public class ConsoleExporter implements IExporter {
 
     @Override
     public void send(ExportMessage message) throws IOException {
-        logger.info("Sending message: {}", message);
+        logger.info(this.getClass().getName()+" Sending message: {}", message);
     }
 
     @Override

@@ -13,11 +13,11 @@ public class SensorStore {
         this.devices = new ArrayList<>();
     }
 
-    public void addDevice(IDevice device) {
+    public synchronized void addDevice(IDevice device) {
         devices.add(device);
     }
 
-    public List<IDevice> getDevices() {
+    public synchronized List<IDevice> getDevices() {
         return devices;
     }
 }

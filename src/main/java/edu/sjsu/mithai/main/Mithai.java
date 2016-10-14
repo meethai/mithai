@@ -1,35 +1,68 @@
 package edu.sjsu.mithai.main;
 
+import edu.sjsu.mithai.config.ConfigFileObservable;
 import edu.sjsu.mithai.config.ConfigMonitorTask;
 import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
+import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
-import edu.sjsu.mithai.mqtt.MQTTReceiverTask;
+import edu.sjsu.mithai.export.ExporterTask;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
+import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
+import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 
-public class Mithai {
+public class Mithai implements Observer {
 
     private static Configuration configuration;
+    private SensorStore sensorStore;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
+        Mithai mithai = new Mithai();
+        if(args.length<1)
+            mithai.start(null);
+        else
+            mithai.start(args[0]);
+    }
+
+    private void start(String arg) throws Exception {
+        ConfigFileObservable.getInstance().addObserver(this);
 
         //TODO file path will be provided by user
-        configuration = new Configuration(Thread.currentThread().getContextClassLoader()
-                .getResource("application.properties").getFile());
+        if(arg==null || arg.equals("")) {
+            File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            configuration = new Configuration(configFile.getParent()+"/application.properties");
+        }
+        else
+            configuration = new Configuration(arg);
 
-        SensorStore sensorStore = loadDevices();
+        sensorStore = new SensorStore();
+
+         loadDevices();
 
         //Start tasks here
         TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
-        TaskManager.getInstance().submitTask(new MQTTReceiverTask(configuration));
+        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+
+        TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
 
         TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+
+        TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
+
+        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+
+       // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
+
 
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
@@ -38,14 +71,29 @@ public class Mithai {
 
     }
 
-    private static SensorStore loadDevices() {
-        SensorStore sensorStore = new SensorStore();
+    private synchronized void loadDevices() {
+        sensorStore.getDevices().clear();
 
         for (int i = 0; i< Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
             sensorStore.addDevice(new TemperatureSensor("sensor-" + i));
         }
+    }
 
-        return sensorStore;
+    @Override
+    public void update(Observable observable, Object o) {
+
+        if (observable instanceof ConfigFileObservable) {
+            loadDevices();
+
+            // Kick out old data generation task and start new one
+            TaskManager.getInstance().stop(DataGenerationTask.class);
+
+            try {
+                TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     static class ShutDownHook extends Thread {
