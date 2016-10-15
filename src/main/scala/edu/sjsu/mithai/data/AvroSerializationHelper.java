@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.data;
 
+import edu.sjsu.mithai.main.Mithai;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
@@ -10,7 +11,7 @@ import org.apache.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.Base64;
 
 public class AvroSerializationHelper implements SerializationHelper<GenericRecord>{
@@ -18,10 +19,11 @@ public class AvroSerializationHelper implements SerializationHelper<GenericRecor
     private Schema schema;
     private Logger logger = Logger.getLogger(getClass());
 
-    public void loadSchema(String schemaFile) throws IOException {
+    public void loadSchema(String schemaFile) throws IOException, URISyntaxException {
         Schema.Parser parser = new Schema.Parser();
-        URL url = getClass().getClassLoader().getResource(schemaFile);
-        this.schema = parser.parse(new File(url.getFile()));
+//        URL url = getClass().getClassLoader().getResource(schemaFile);
+        File jarfile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        this.schema = parser.parse(new File(jarfile.getParent()+"/"+schemaFile));
         logger.info(schema.getFields());
     }
 

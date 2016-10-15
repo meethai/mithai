@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import scala.reflect.ClassTag$;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
@@ -30,6 +31,8 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
         try {
             av.loadSchema("sensor.json");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         dataReciever.setSerializationHelper(av);

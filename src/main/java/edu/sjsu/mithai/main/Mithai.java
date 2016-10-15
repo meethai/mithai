@@ -13,6 +13,7 @@ import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -26,14 +27,22 @@ public class Mithai implements Observer {
 
     public static void main(String[] args) throws Exception {
         Mithai mithai = new Mithai();
-        mithai.start(args[0]);
+        if(args.length<1)
+            mithai.start(null);
+        else
+            mithai.start(args[0]);
     }
 
     private void start(String arg) throws Exception {
         ConfigFileObservable.getInstance().addObserver(this);
 
         //TODO file path will be provided by user
-        configuration = new Configuration(arg);
+        if(arg==null || arg.equals("")) {
+            File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            configuration = new Configuration(configFile.getParent()+"/application.properties");
+        }
+        else
+            configuration = new Configuration(arg);
 
         sensorStore = new SensorStore();
 
@@ -46,7 +55,7 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
