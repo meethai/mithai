@@ -13,6 +13,10 @@
 </head>
 <body>
 <script src="javascripts/d3_sample.js" defer></script>
+<script type="application/javascript">
+    var data = <%- vizData %>;
+    console.log(data);
+</script>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -38,7 +42,7 @@
         </div>
     </div>
 </nav>
-
+<!--<h4>data=<%= vizData %></h4>-->
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">

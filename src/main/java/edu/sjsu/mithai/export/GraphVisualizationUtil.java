@@ -72,7 +72,7 @@ class LinkTuple {
 
 public class GraphVisualizationUtil {
 
-    private final static int NODE_DISTANCE = 15;
+    private final static int NODE_DISTANCE = 30;
     private final static int SENSOR_DEVICE_DISTANCE = 10;
     private final static int SENSOR_DISTANCE = 1;
 
