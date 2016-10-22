@@ -40,12 +40,14 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 //    data.foreach(x=>println(x+"<--"))
     data.foreach(x=>{
       Store.messageStore.addMessage(new ExportMessage(x.toString))
-      if(x.isInstanceOf[AvroGraphMetadata]){
-        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
-        var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
-        Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
-      }
 
+      if(x.isInstanceOf[AvroGraphMetadata]){
+        var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
+        println(metadataVisualization)
+        Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
+        println(Store.messageStore.getMessageQueue.size())
+//        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
+      }
     })
 
       val graph = gc.createGraph(data, streamingObject.sparkContext)
