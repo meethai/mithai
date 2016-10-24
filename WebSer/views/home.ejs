@@ -12,7 +12,6 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 </head>
 <body>
-<script src="javascripts/d3_sample.js" defer></script>
 <script type="application/javascript">
     var data = <%- vizData %>;
     console.log(data);
@@ -52,11 +51,14 @@
                 <li><a href="#">Analytics</a></li>
                 <li><a href="#">Export</a></li>
             </ul>
-
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Dashboard</h1>
-            <svg class="row" width="800" height="480"></svg>
+            <svg id="graph"></svg>
+        </div>
+    </div>
+    <div class="row">
+        <div id="graph2" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
         </div>
     </div>
@@ -69,4 +71,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+<script type="text/javascript" src="javascripts/d3_sample.js" defer></script>
+<!--<script type="text/javascript" src="javascripts/graph2.js" defer></script>-->
 </html>

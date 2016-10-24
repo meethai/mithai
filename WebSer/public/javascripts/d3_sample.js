@@ -5,35 +5,40 @@
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
-
+console.log("w= " + width + " h= " + height);
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("link", d3.forceLink().id(function (d) {
+        return d.id;
+    }))
     .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("center", d3.forceCenter(800 / 2, 400 / 2));
 
-// function loadData(data) {
-
-// d3.json(data, function (error, graph) {
+// d3.json("miserables.json", function (error, graph) {
 var graph = data;
-// if (error) throw error;
+if (error) throw error;
 
 var link = svg.append("g")
     .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
+    // .attr("transform","scale(2)")
     .attr("stroke-width", function (d) {
         return Math.sqrt(d.value);
     });
 
 var node = svg.append("g")
     .attr("class", "nodes")
-    .selectAll("circle")
+    .selectAll("g")
     .data(graph.nodes)
-    .enter().append("circle")
+    .enter()
+    .append("g")
+    .attr("class", "g-wrap")
+    .append("circle")
     .attr("r", 5)
+    // .attr("transform","scale(2)")
     .attr("fill", function (d) {
         return color(d.group);
     })
@@ -42,13 +47,25 @@ var node = svg.append("g")
         .on("drag", dragged)
         .on("end", dragended));
 
-node.append("title")
+svg.selectAll(".g-wrap")
+    .append("svg:text")
     .text(function (d) {
         return d.id;
-    });
+    })
+    .style("fill", "#555")
+    .style("font-family", "Arial")
+    .style("font-size", 12);
+
+var attractForce = d3.forceManyBody().strength(30).distanceMax(2)
+    .distanceMin(20);
+var repelForce = d3.forceManyBody().strength(-240).distanceMax(50)
+    .distanceMin(40);
 
 simulation
     .nodes(graph.nodes)
+    .alphaDecay(0.03)
+    .force("attractForce", attractForce)
+    .force("repelForce", repelForce)
     .on("tick", ticked);
 
 simulation.force("link")
@@ -76,10 +93,16 @@ function ticked() {
         .attr("cy", function (d) {
             return d.y;
         });
+
+    svg.selectAll("text")
+        .attr("x", function (d) {
+            return d.x;
+        })
+        .attr("y", function (d) {
+            return d.y;
+        });
 }
 // });
-
-// }
 
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -95,5 +118,6 @@ function dragged(d) {
 function dragended(d) {
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;
+    d.fy = null;
     d.fy = null;
 }
