@@ -49,7 +49,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
             List<GraphMetadata> metadataList = new ArrayList<>();
             graph.getAsJsonArray().forEach(t -> {
                 t.getAsJsonObject();
-                System.out.println(t.getAsJsonObject());
+                //System.out.println(t.getAsJsonObject());
                 localGraphList.add(gson.fromJson(t, AvroGraphMetadata.class));
             });
         }

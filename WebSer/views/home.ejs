@@ -14,7 +14,37 @@
 <body>
 <script type="application/javascript">
     var data = <%- vizData %>;
-    console.log(data);
+    var x = {
+        nodes: [{id: 'node1', group: 0}, {id: 'node2', group: 1}, {id: 'node3', group: 2}, {
+            id: 'node5',
+            group: 3
+        }, {id: 'sensor1', group: 0}, {id: 'sensor2', group: 0}, {id: 'sensor3', group: 0}],
+        links: [{source: 'node1', target: 'node2', value: 30}, {
+            source: 'node1',
+            target: 'node3',
+            value: 30
+        }, {source: 'node1', target: 'node5', value: 30}, {
+            source: 'node1',
+            target: 'sensor1',
+            value: 10
+        }, {source: 'sensor1', target: 'sensor2', value: 1}, {
+            source: 'sensor1',
+            target: 'sensor3',
+            value: 1
+        }, {source: 'node1', target: 'sensor2', value: 10}, {
+            source: 'sensor2',
+            target: 'sensor1',
+            value: 1
+        }, {source: 'sensor2', target: 'sensor3', value: 1}, {
+            source: 'node1',
+            target: 'sensor3',
+            value: 10
+        }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
+    };
+    (function () {
+        data = x;
+        setTimeout(arguments.callee, 60000);
+    })();
 </script>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -67,10 +97,6 @@
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="javascripts/d3_sample.js" defer></script>
-<!--<script type="text/javascript" src="javascripts/graph2.js" defer></script>-->
 </html>

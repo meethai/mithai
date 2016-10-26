@@ -27,7 +27,7 @@ public class HttpExporter implements IExporter {
 
     @Override
     public void send(ExportMessage message) throws IOException {
-        System.out.println("Sending message: " + message);
+//        System.out.println("Sending message: " + message);
         HttpPost post = new HttpPost(uri);
         post.addHeader("content-type", "application/json");
         post.setEntity(new StringEntity(message.getMessage()));

@@ -16,22 +16,18 @@ import scala.reflect.ClassTag
   * Created by kaustubh on 9/17/16.
   */
 class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
-  private val logger: Logger = Logger.getLogger(this.getClass)
+  val gc = new GraphCreator
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
-
-  private var _serializationHelper: SerializationHelper[D] = _
+  val gp = new GraphProcessor
 
   logger.debug("setting spark context")
-
-  private var data: List[D] = _
-
+  private val logger: Logger = Logger.getLogger(this.getClass)
   private val streamingObject = SparkStreamingObject
 
   private val stream = streamingObject.getStream(brokerUrl, topic)
-  val gc = new GraphCreator
-
-  val gp = new GraphProcessor
+  private var _serializationHelper: SerializationHelper[D] = _
+  private var data: List[D] = _
 
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
@@ -46,13 +42,13 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
         println(metadataVisualization)
         Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
         println(Store.messageStore.getMessageQueue.size())
-//        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
+        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata], streamingObject.sparkContext)
       }
     })
 
       val graph = gc.createGraph(data, streamingObject.sparkContext)
 
-//    gp.process(graph)
+    gp.process(graph)
 
   })
 

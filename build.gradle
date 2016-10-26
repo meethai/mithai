@@ -67,11 +67,34 @@ jar {
 
         exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
-
+    doLast {
+        task copy(type: Copy) {
+            from 'src/main/resources'
+            into './deployable'
+        }
+        tasks.copy.execute()
+        tasks.zip.execute()
+    }
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.1'
+}
+
+task copyResources(type: Copy) {
+    from 'src/main/resources'
+    into 'build/classes'
+}
+
+task zip(type: Zip) {
+    from('deployable/')
+    destinationDir file('zip') // directory that you want your archive to be placed in
+}
+
+build {
+    doLast {
+        tasks.copyResources.execute()
+    }
 }
 
 // In this section you declare the dependencies for your production and test code
