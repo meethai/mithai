@@ -13,7 +13,7 @@
 </head>
 <body>
 <script type="application/javascript">
-    var data = <%- vizData %>;
+    <!--var data = <%- vizData %>;-->
     var x = {
         nodes: [{id: 'node1', group: 0}, {id: 'node2', group: 1}, {id: 'node3', group: 2}, {
             id: 'node5',
@@ -41,10 +41,7 @@
             value: 10
         }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
     };
-    (function () {
-        data = x;
-        setTimeout(arguments.callee, 60000);
-    })();
+    var data = x;
 </script>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -84,7 +81,7 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Dashboard</h1>
-            <svg id="graph"></svg>
+            <svg id="graph" viewBox="0 0 600 480" perserveAspectRatio="xMinYMid"></svg>
         </div>
     </div>
     <div class="row">
@@ -93,7 +90,6 @@
         </div>
     </div>
 </div>
-
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
