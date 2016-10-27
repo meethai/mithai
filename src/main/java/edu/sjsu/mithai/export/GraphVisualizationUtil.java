@@ -1,7 +1,6 @@
 package edu.sjsu.mithai.export;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import edu.sjsu.mithai.data.AvroGraphMetadata;
 
 import java.util.HashMap;
@@ -73,7 +72,7 @@ class LinkTuple {
 
 public class GraphVisualizationUtil {
 
-    private final static int NODE_DISTANCE = 15;
+    private final static int NODE_DISTANCE = 30;
     private final static int SENSOR_DEVICE_DISTANCE = 10;
     private final static int SENSOR_DISTANCE = 1;
 
@@ -111,7 +110,8 @@ public class GraphVisualizationUtil {
         visualization.put("nodes", nodes);
         visualization.put("links", links);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson();
         output = gson.toJson(visualization);
 
         return output;
