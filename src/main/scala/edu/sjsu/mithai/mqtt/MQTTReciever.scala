@@ -16,18 +16,22 @@ import scala.reflect.ClassTag
   * Created by kaustubh on 9/17/16.
   */
 class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
-  val gc = new GraphCreator
+  private val logger: Logger = Logger.getLogger(this.getClass)
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
-  val gp = new GraphProcessor
+
+  private var _serializationHelper: SerializationHelper[D] = _
 
   logger.debug("setting spark context")
-  private val logger: Logger = Logger.getLogger(this.getClass)
+
+  private var data: List[D] = _
+
   private val streamingObject = SparkStreamingObject
 
   private val stream = streamingObject.getStream(brokerUrl, topic)
-  private var _serializationHelper: SerializationHelper[D] = _
-  private var data: List[D] = _
+  val gc = new GraphCreator
+
+  val gp = new GraphProcessor
 
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
@@ -35,14 +39,15 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
     //TODO sendToGraphProcessor(data)
 //    data.foreach(x=>println(x+"<--"))
     data.foreach(x=>{
-      Store.messageStore.addMessage(new ExportMessage(x.toString))
 
       if(x.isInstanceOf[AvroGraphMetadata]){
         var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
         println(metadataVisualization)
         Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
         println(Store.messageStore.getMessageQueue.size())
-        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata], streamingObject.sparkContext)
+        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
+      } else {
+        println(x)
       }
     })
 

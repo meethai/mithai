@@ -22,7 +22,6 @@ public class GenericSerializationHelper implements SerializationHelper<Object> {
     @Override
     public Object deserialize(String stream) throws Exception {
         String message = new String(Base64.getDecoder().decode(stream.getBytes()));
-//        System.out.println(message);
         return gson.fromJson(message, clazz);
     }
 }
