@@ -17,55 +17,26 @@ class MQTTPublisher(brokerUrl: String) {
   var topic: String = null
   client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
 
-  def sendDataToTopic(aData: Streamable, topic: String): Unit = {
-    try {
+  client.connect()
 
-      client.connect()
+  def sendDataToTopic(aData: Streamable, topic: String): Unit = {
       val msgtopic = client.getTopic(topic)
       val message = new MqttMessage(aData.getJsonBytes())
       msgtopic.publish(message)
-
-    }
-    catch {
-      case e: MqttException if e.getReasonCode == MqttException.REASON_CODE_MAX_INFLIGHT =>
-        logger.error("Queue is full, wait for to consume data from the message queue", e)
-      case e: MqttException => println("Exception Caught: " + e)
-    }
-    finally {
-      if (client != null) {
-        client.disconnect()
-      }
-    }
   }
 
   def sendDataToTopic(data: String, topic: String): Unit = {
-    client.connect();
     val msgTopic = client.getTopic(topic)
     val message = new MqttMessage(data.getBytes())
 
-    println("Sending message: " + data)
     msgTopic.publish(message)
-
-    client.disconnect()
   }
 
   def sendDataToTopic(aData: Seq[Streamable], topic: String): Unit = {
-    try {
-      client.connect()
+
       val msgtopic = client.getTopic(topic)
       aData.foreach(data => msgtopic.publish(new MqttMessage(data.getJsonBytes())))
-    }
-    catch {
-      case e: MqttException if e.getReasonCode == MqttException.REASON_CODE_MAX_INFLIGHT =>
-        logger.error("Queue is full, wait for to consume data from the message queue", e)
-      case e: MqttException => logger.error("Exception Caught: ", e)
-    }
-    finally {
-      if (client != null) {
-        client.disconnect()
-      }
-    }
-  }
+   }
 
 
 }

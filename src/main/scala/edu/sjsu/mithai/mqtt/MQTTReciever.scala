@@ -9,6 +9,7 @@ import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.graphx.{Graph, PartitionID}
 
 import scala.reflect.ClassTag
 
@@ -16,9 +17,9 @@ import scala.reflect.ClassTag
   * Created by kaustubh on 9/17/16.
   */
 class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
-  private val logger: Logger = Logger.getLogger(this.getClass)
-  Logger.getLogger("org").setLevel(Level.OFF)
-  Logger.getLogger("akka").setLevel(Level.OFF)
+  private val logger: Logger = Logger.getLogger(MQTTReciever.getClass)
+  Logger.getLogger("org").setLevel(Level.ERROR)
+  Logger.getLogger("akka").setLevel(Level.ERROR)
 
   private var _serializationHelper: SerializationHelper[D] = _
 
@@ -33,6 +34,8 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 
   val gp = new GraphProcessor
 
+  var graph:Graph[String, PartitionID] = null
+
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
@@ -42,18 +45,17 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 
       if(x.isInstanceOf[AvroGraphMetadata]){
         var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
-        println(metadataVisualization)
+//        logger.debug("Metadata Visualization:" + metadataVisualization)
         Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
-        println(Store.messageStore.getMessageQueue.size())
-        gc.createMetaDataGraph(x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
+        logger.debug("Message count in export message store: " + Store.messageStore.getMessageQueue.size())
+        graph = gc.createMetaDataGraph(graph, x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
       } else {
-        println(x)
+//        println(x)
       }
     })
 
-      val graph = gc.createGraph(data, streamingObject.sparkContext)
-
-    gp.process(graph)
+//      val graph = gc.createGraph(data, streamingObject.sparkContext)
+//      gp.process(graph)
 
   })
 
@@ -67,13 +69,19 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
     if (_serializationHelper == null) {
       throw new NullPointerException("SerializationHelper cannot be null in MQTTReciever")
     }
-    streamingObject.streamingContext.start()
+//    streamingObject.streamingContext.start()
   }
 
   /**
     * This method stops the Spark Streaming (not Graceful)
     */
-  def stop(stopSparkContext: Boolean = true): Unit = streamingObject.streamingContext.stop(stopSparkContext)
+  def stop(stopSparkContext: Boolean = true): Unit = {
+    stream.stop();
+    if (streamingObject.streamingContext != null) {
+//      streamingObject.streamingContext.stop(stopSparkContext, true)
+//      streamingObject.streamingContext = null;
+    }
+  }
 
   /**
     * Wait for the execution to stop. Any exceptions that occurs during the execution

@@ -58,7 +58,8 @@ class GraphCreator {
     return v.toList
   }
 
-  def createMetaDataGraph(agm:AvroGraphMetadata , sc:SparkContext):Graph[String,PartitionID]={
+  def createMetaDataGraph(existingGraph:Graph[String, PartitionID], agm:AvroGraphMetadata , sc:SparkContext):Graph[String,PartitionID]={
+
     var edges = new ListBuffer[Edge[PartitionID]]
     var vert = new util.HashSet[(VertexId,String)]()
     agm.getLocalGraph.toList.foreach(p=>{
@@ -78,7 +79,21 @@ class GraphCreator {
     graph.vertices.collect().foreach(x=>println(x+"<--metaVertex"))
     graph.edges.collect().foreach(x=>println(x+"<--metaEdge"))
 
-    return graph
+    var output: Graph[String, PartitionID] = null
+
+    if (existingGraph != null) {
+      println("Graphs should be merged...")
+      output = Graph(existingGraph.vertices.union(graph.vertices).distinct(),
+        existingGraph.edges.union(existingGraph.edges).distinct())
+
+      println()
+      println("------------------------------------------")
+      output.vertices.collect().foreach(t=>println(t))
+    } else {
+      output = graph
+    }
+
+    return output
 
   }
 }
