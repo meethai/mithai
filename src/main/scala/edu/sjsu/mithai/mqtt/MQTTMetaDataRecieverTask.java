@@ -40,6 +40,7 @@ public class MQTTMetaDataRecieverTask extends StoppableRunnableTask {
             logger.error("Metadata Receiver is NULL");
             return;
         }
-        metadataReciever.stop(true);
+
+        metadataReciever.stop(false);
     }
 }

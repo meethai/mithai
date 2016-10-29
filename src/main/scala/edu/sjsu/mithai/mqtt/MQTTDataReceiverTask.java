@@ -24,7 +24,7 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
     @Override
     public void run() {
         logger.debug("Mqtt dataReciever running....");
-        dataReciever = new MQTTReciever<SensorData>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
+        dataReciever = new MQTTReciever<SensorData>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(SensorData.class));
         SensorDataSerializationHelper avro = new SensorDataSerializationHelper();
         dataReciever.setSerializationHelper(avro);
         dataReciever.start();
@@ -33,6 +33,9 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
     @Override
     public void stop() {
         logger.debug("stopping...");
-        dataReciever.stop(true);
+
+        if (dataReciever != null) {
+            dataReciever.stop(false);
+        }
     }
 }

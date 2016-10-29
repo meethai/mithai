@@ -6,6 +6,7 @@ import edu.sjsu.mithai.mqtt.MQTTPublisher;
 import edu.sjsu.mithai.mqtt.MqttService;
 import edu.sjsu.mithai.sensors.IDevice;
 import edu.sjsu.mithai.util.StoppableExecutableTask;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,20 @@ public class DataGenerationTask extends StoppableExecutableTask {
             Thread.sleep(Long.parseLong(configuration.getProperty(MithaiProperties.DATA_GENERATION_INTERVAL)));
         } catch (InterruptedException e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+
+        if (publisher.client().isConnected()) {
+            try {
+                publisher.client().disconnect(1000);
+                publisher.client().close();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

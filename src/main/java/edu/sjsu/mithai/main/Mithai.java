@@ -1,13 +1,16 @@
 package edu.sjsu.mithai.main;
 
 import edu.sjsu.mithai.config.ConfigFileObservable;
+import edu.sjsu.mithai.config.ConfigMonitorTask;
 import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
 import edu.sjsu.mithai.export.ExporterTask;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
+import edu.sjsu.mithai.spark.SparkStreamingObject;
 import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 
@@ -32,7 +35,10 @@ public class Mithai implements Observer {
     }
 
     private void start(String arg) throws Exception {
+
         ConfigFileObservable.getInstance().addObserver(this);
+
+        Runtime.getRuntime().addShutdownHook(new ShutDownHook());
 
         //TODO file path will be provided by user
         if(arg==null || arg.equals("")) {
@@ -57,15 +63,18 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+//        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
 
        // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
-
+        // Start Streaming context
+        Thread.sleep(10 * 1000);
+        SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
 
-        Runtime.getRuntime().addShutdownHook(new ShutDownHook());
+
+
 
     }
 
