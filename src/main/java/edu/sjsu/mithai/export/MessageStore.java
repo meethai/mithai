@@ -12,7 +12,10 @@ public class MessageStore {
     }
 
     public void addMessage(ExportMessage message) {
-        messageQueue.add(message);
+
+        if (messageQueue.size() < 10) {
+            messageQueue.add(message);
+        }
     }
 
     public void addMessages(List<ExportMessage> messages) {

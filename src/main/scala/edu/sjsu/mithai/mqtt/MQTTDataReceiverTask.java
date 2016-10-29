@@ -1,14 +1,12 @@
 package edu.sjsu.mithai.mqtt;
 
 import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.data.AvroSerializationHelper;
+import edu.sjsu.mithai.data.SensorData;
+import edu.sjsu.mithai.data.SensorDataSerializationHelper;
 import edu.sjsu.mithai.util.StoppableRunnableTask;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.log4j.Logger;
 import scala.reflect.ClassTag$;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
@@ -26,16 +24,9 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
     @Override
     public void run() {
         logger.debug("Mqtt dataReciever running....");
-        dataReciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
-        AvroSerializationHelper av = new AvroSerializationHelper();
-        try {
-            av.loadSchema("sensor.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        dataReciever.setSerializationHelper(av);
+        dataReciever = new MQTTReciever<SensorData>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
+        SensorDataSerializationHelper avro = new SensorDataSerializationHelper();
+        dataReciever.setSerializationHelper(avro);
         dataReciever.start();
     }
 
