@@ -16,9 +16,9 @@ public class ExporterTask extends StoppableRunnableTask {
     private Configuration configuration;
     private Exporter exporter;
     private long sendInterval;
-    private MessageStore messageStore;
+    private MessageStore<ExportMessage> messageStore;
 
-    public ExporterTask(Configuration configuration, MessageStore messageStore) throws Exception {
+    public ExporterTask(Configuration configuration, MessageStore<ExportMessage> messageStore) throws Exception {
         this.configuration = configuration;
         this.sendInterval = Long.parseLong(configuration.getProperty(MithaiProperties.EXPORTER_TIME_INTERVAL));
         this.messageStore = messageStore;
