@@ -1,7 +1,7 @@
 package edu.sjsu.mithai.spark
 
 import edu.sjsu.mithai.export.MessageStore
-import org.apache.spark.graphx.GraphXUtils
+import org.apache.spark.graphx.{Graph, GraphXUtils, PartitionID}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
@@ -36,4 +36,5 @@ object SparkStreamingObject{
 
 object Store{
   var messageStore = new MessageStore
+  var graph:Graph[(String, Double), PartitionID] = null
 }

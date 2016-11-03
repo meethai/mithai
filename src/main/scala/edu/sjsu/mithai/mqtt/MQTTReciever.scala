@@ -1,21 +1,16 @@
 package edu.sjsu.mithai.mqtt
 
-
 import edu.sjsu.mithai.config.Configuration
 import edu.sjsu.mithai.config.MithaiProperties._
-import edu.sjsu.mithai.data.{AvroGraphMetadata, AvroSerializationHelper, GenericSerializationHelper, SerializationHelper}
+import edu.sjsu.mithai.data._
 import edu.sjsu.mithai.export.{ExportMessage, GraphVisualizationUtil}
 import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.graphx.{Graph, PartitionID}
 
 import scala.reflect.ClassTag
 
-/**
-  * Created by kaustubh on 9/17/16.
-  */
 class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(MQTTReciever.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
@@ -34,23 +29,19 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
 
   val gp = new GraphProcessor
 
-  var graph:Graph[String, PartitionID] = null
-
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
-    //TODO sendToGraphProcessor(data)
-//    data.foreach(x=>println(x+"<--"))
+
     data.foreach(x=>{
 
       if(x.isInstanceOf[AvroGraphMetadata]){
+        println("Metadata Task")
         var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
 //        logger.debug("Metadata Visualization:" + metadataVisualization)
         Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
         logger.debug("Message count in export message store: " + Store.messageStore.getMessageQueue.size())
-        graph = gc.createMetaDataGraph(graph, x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
-      } else {
-//        println(x)
+        Store.graph = gc.createMetaDataGraph(Store.graph, x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
       }
     })
 
