@@ -1,6 +1,7 @@
 package edu.sjsu.mithai.mqtt
 
 import edu.sjsu.mithai.data._
+import edu.sjsu.mithai.graphX.GraphProcessor
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.log4j.{Level, Logger}
 
@@ -8,7 +9,7 @@ import scala.reflect.ClassTag
 
 class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
 
-  private val logger: Logger = Logger.getLogger(MQTTReciever.getClass)
+  private val logger: Logger = Logger.getLogger(MQTTDataReceiver.this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
   Logger.getLogger("akka").setLevel(Level.ERROR)
 
@@ -47,6 +48,10 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     }
     logger.debug("=========================")
 
+    if (Store.graph != null) {
+      logger.debug("Min: " + GraphProcessor.min(Store.graph))
+      logger.debug("Max: " + GraphProcessor.max(Store.graph))
+    }
   })
 
   @throws(classOf[Exception])
