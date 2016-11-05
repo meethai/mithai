@@ -1,14 +1,18 @@
 package edu.sjsu.mithai.main;
 
 import edu.sjsu.mithai.config.ConfigFileObservable;
+import edu.sjsu.mithai.config.ConfigMonitorTask;
 import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
+import edu.sjsu.mithai.export.ExporterTask;
+import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.spark.SparkStreamingObject;
+import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 
 import java.io.File;
@@ -52,7 +56,7 @@ public class Mithai implements Observer {
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
 
         TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
 
@@ -67,7 +71,7 @@ public class Mithai implements Observer {
        // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
         // Start Streaming context
-        Thread.sleep(10 * 1000);
+        Thread.sleep(2 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
@@ -80,8 +84,8 @@ public class Mithai implements Observer {
     private synchronized void loadDevices() {
         sensorStore.getDevices().clear();
 
-        for (int i = 0; i< Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
-            sensorStore.addDevice(new TemperatureSensor("sensor-" + i));
+        for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
+            sensorStore.addDevice(new TemperatureSensor("sensor" + i));
         }
     }
 

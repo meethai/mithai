@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MetadataGenerationTask extends StoppableExecutableTask {
     private static final String TOPIC = "metadata";
-    private static final int RESEND_COUNT = 300;
+    private static final int RESEND_COUNT = 3;
     private final Gson gson;
     private Configuration configuration;
     private MQTTPublisher publisher;
@@ -77,7 +77,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         }
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

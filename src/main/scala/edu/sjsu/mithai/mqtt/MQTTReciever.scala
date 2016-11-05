@@ -1,23 +1,15 @@
 package edu.sjsu.mithai.mqtt
 
-
-import edu.sjsu.mithai.config.Configuration
-import edu.sjsu.mithai.config.MithaiProperties._
-import edu.sjsu.mithai.data.{AvroGraphMetadata, AvroSerializationHelper, GenericSerializationHelper, SerializationHelper}
+import edu.sjsu.mithai.data._
 import edu.sjsu.mithai.export.{ExportMessage, GraphVisualizationUtil}
-import edu.sjsu.mithai.graphX.{GraphCreator, GraphProcessor}
+import edu.sjsu.mithai.graphX.GraphCreator
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
-import org.apache.avro.generic.GenericRecord
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.graphx.{Graph, PartitionID}
 
 import scala.reflect.ClassTag
 
-/**
-  * Created by kaustubh on 9/17/16.
-  */
 class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
-  private val logger: Logger = Logger.getLogger(MQTTReciever.getClass)
+  private val logger: Logger = Logger.getLogger(MQTTReciever.this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
   Logger.getLogger("akka").setLevel(Level.ERROR)
 
@@ -30,33 +22,24 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
   private val streamingObject = SparkStreamingObject
 
   private val stream = streamingObject.getStream(brokerUrl, topic)
+
   val gc = new GraphCreator
-
-  val gp = new GraphProcessor
-
-  var graph:Graph[String, PartitionID] = null
 
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x=>println(x+"<--recieved raw"))
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
-    //TODO sendToGraphProcessor(data)
-//    data.foreach(x=>println(x+"<--"))
+
     data.foreach(x=>{
 
       if(x.isInstanceOf[AvroGraphMetadata]){
+        println("Metadata Task")
         var metadataVisualization:String = GraphVisualizationUtil.parseGraphTuple(x.asInstanceOf[AvroGraphMetadata])
 //        logger.debug("Metadata Visualization:" + metadataVisualization)
         Store.messageStore.addMessage(new ExportMessage(metadataVisualization))
         logger.debug("Message count in export message store: " + Store.messageStore.getMessageQueue.size())
-        graph = gc.createMetaDataGraph(graph, x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
-      } else {
-//        println(x)
+        Store.graph = gc.createMetaDataGraph(Store.graph, x.asInstanceOf[AvroGraphMetadata],streamingObject.sparkContext)
       }
     })
-
-//      val graph = gc.createGraph(data, streamingObject.sparkContext)
-//      gp.process(graph)
-
   })
 
   /**
@@ -77,10 +60,6 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
     */
   def stop(stopSparkContext: Boolean = true): Unit = {
     stream.stop();
-    if (streamingObject.streamingContext != null) {
-//      streamingObject.streamingContext.stop(stopSparkContext, true)
-//      streamingObject.streamingContext = null;
-    }
   }
 
   /**
@@ -96,26 +75,5 @@ class MQTTReciever[D: ClassTag](val brokerUrl: String, val topic: String) {
     */
   def setSerializationHelper(serializationHelper: SerializationHelper[D]): Unit = {
     _serializationHelper = serializationHelper
-  }
-
-}
-
-object MQTTReciever {
-  def main(args: Array[String]): Unit = {
-    val config = new Configuration(getClass.getClassLoader.getResource("application.properties").getFile)
-
-    val dataReciever = new MQTTReciever[GenericRecord](config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC))
-
-    val metadataReciever = new MQTTReciever[Object](config.getProperty(MQTT_BROKER), "metadata")
-    val metadataSerializer = new GenericSerializationHelper(AvroGraphMetadata.getClassSchema.getClass)
-//    metadataSerializer.loadSchema("metadata.json")
-    metadataReciever.setSerializationHelper(metadataSerializer)
-    metadataReciever.start()
-    val avro = new AvroSerializationHelper()
-    avro.loadSchema("sensor.json")
-    dataReciever.setSerializationHelper(avro)
-//    dataReciever.start()
-//    dataReciever.awaitTermination()
-    metadataReciever.awaitTermination()
   }
 }
