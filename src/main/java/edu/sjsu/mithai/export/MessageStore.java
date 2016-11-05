@@ -3,23 +3,28 @@ package edu.sjsu.mithai.export;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MessageStore {
+public class MessageStore<T> {
 
-    private LinkedBlockingQueue<ExportMessage> messageQueue;
+    private LinkedBlockingQueue<T> messageQueue;
+    private int size;
 
-    public MessageStore() {
+    public MessageStore(int size) {
+        this.size = size;
         this.messageQueue = new LinkedBlockingQueue<>();
     }
 
-    public void addMessage(ExportMessage message) {
-        messageQueue.add(message);
+    public void addMessage(T message) {
+
+        if (messageQueue.size() < size) {
+            messageQueue.add(message);
+        }
     }
 
-    public void addMessages(List<ExportMessage> messages) {
+    public void addMessages(List<T> messages) {
         messageQueue.addAll(messages);
     }
 
-    public LinkedBlockingQueue<ExportMessage> getMessageQueue() {
+    public LinkedBlockingQueue<T> getMessageQueue() {
         return messageQueue;
     }
 
