@@ -20,16 +20,29 @@ object GraphProcessor {
     })
   }
 
-  def shortestPath (graph: Graph[(String, Double), PartitionID]): (VertexId, (String, Double)) ={
+
+
+  def shortestPath(graph: Graph[(String, Double), PartitionID], from: VertexId): Unit ={
 
     graph.vertices.first()
-   // val result = ShortestPaths.run(graph, Seq(graph.vertices.collect())
 
+    val vert: Seq[VertexId] = graph.vertices.collect().map(x=>x._1).toSeq
+    val result = ShortestPaths.run(graph, vert)
+    val shortPath = result.vertices
+                             .filter({case(vId, _) => vId == from})
+                             .first
+                             ._2
 
+    println("Shortest Path from vertice: "+from+" is: "+shortPath)
   }
 
-  def avg(): Unit ={
+  def avg(graph: Graph[(String, Double), PartitionID]): Double  ={
 
+    val sum: Double =0
+    //graph.vertices.collect().reduceLeft((,x) => { (x._2._2)})
+    graph.vertices.collect().foreach(x => sum + x._2._2)
+    val average  = sum/graph.vertices.count()
+    return average
   }
 
 
