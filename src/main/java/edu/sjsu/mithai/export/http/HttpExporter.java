@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.export.http;
 
+import com.google.gson.Gson;
 import edu.sjsu.mithai.export.ExportMessage;
 import edu.sjsu.mithai.export.IExporter;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,14 +28,16 @@ public class HttpExporter implements IExporter {
 
     @Override
     public void send(ExportMessage message) throws IOException {
-//        System.out.println("Sending message: " + message);
+        System.out.println("Sending message over HTTP: " + message);
+        System.out.println("URI:" + uri);
         HttpPost post = new HttpPost(uri);
         post.addHeader("content-type", "application/json");
-        post.setEntity(new StringEntity(message.getMessage()));
+        Gson gson = new Gson();
+        post.setEntity(new StringEntity(gson.toJson(message)));
         CloseableHttpResponse response = client.execute(post);
-
+        System.out.println(response.getStatusLine());
         EntityUtils.consume(response.getEntity());
-//        System.out.println(response.getStatusLine());
+
     }
 
     @Override

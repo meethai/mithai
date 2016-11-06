@@ -66,12 +66,12 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
 
        // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
         // Start Streaming context
-        Thread.sleep(2 * 1000);
+        Thread.sleep(7 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();

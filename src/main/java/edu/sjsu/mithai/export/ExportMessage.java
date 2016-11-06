@@ -19,7 +19,7 @@ public final class ExportMessage implements Serializable {
     @Override
     public String toString() {
         return "ExportMessage{" +
-                "message='" + message + '\'' +
+                "message:" + message +
                 '}';
     }
 }

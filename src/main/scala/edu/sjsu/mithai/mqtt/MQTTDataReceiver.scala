@@ -1,6 +1,8 @@
 package edu.sjsu.mithai.mqtt
 
+import com.google.gson.Gson
 import edu.sjsu.mithai.data._
+import edu.sjsu.mithai.export.ExportMessage
 import edu.sjsu.mithai.graphX.GraphProcessor
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.log4j.{Level, Logger}
@@ -49,8 +51,16 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     logger.debug("=========================")
 
     if (Store.graph != null) {
-      logger.debug("Min: " + GraphProcessor.min(Store.graph))
-      logger.debug("Max: " + GraphProcessor.max(Store.graph))
+
+      val min = GraphProcessor.min(Store.graph)
+      val max = GraphProcessor.max(Store.graph)
+      logger.debug("Min: " + min)
+      logger.debug("Max: " + max)
+
+      var gson:Gson = new Gson()
+      var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
+
+      Store.messageStore.addMessage(new ExportMessage(message))
     }
   })
 
