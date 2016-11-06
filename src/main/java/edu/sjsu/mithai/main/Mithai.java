@@ -45,16 +45,18 @@ public class Mithai implements Observer {
         if(arg==null || arg.equals("")) {
             File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             configuration = new Configuration(configFile.getParent()+"/application.properties");
+            System.out.println(configFile.getAbsolutePath());
         }
         else
             configuration = new Configuration(arg);
+
 
         sensorStore = new SensorStore();
 
          loadDevices();
 
         //Start tasks here
-//        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
+        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
         TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
 
@@ -66,12 +68,12 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
 
        // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
 
         // Start Streaming context
-        Thread.sleep(2 * 1000);
+        Thread.sleep(7 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
@@ -85,7 +87,7 @@ public class Mithai implements Observer {
         sensorStore.getDevices().clear();
 
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
-            sensorStore.addDevice(new TemperatureSensor("sensor" + i));
+            sensorStore.addDevice(new TemperatureSensor("spot" + i));
         }
     }
 
