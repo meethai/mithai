@@ -51,6 +51,7 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     if (Store.graph != null) {
       logger.debug("Min: " + GraphProcessor.min(Store.graph))
       logger.debug("Max: " + GraphProcessor.max(Store.graph))
+
     }
   })
 

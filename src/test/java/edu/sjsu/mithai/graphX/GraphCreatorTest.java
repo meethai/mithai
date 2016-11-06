@@ -1,11 +1,8 @@
 package edu.sjsu.mithai.graphX;
 
 import edu.sjsu.mithai.data.AvroGraphMetadata;
-import edu.sjsu.mithai.spark.SparkStreamingObject;
 import edu.sjsu.mithai.util.BaseTest;
-import org.apache.spark.graphx.Graph;
 import org.junit.Test;
-import scala.Tuple2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,10 +53,10 @@ public class GraphCreatorTest extends BaseTest {
 
         GraphCreator creator = new GraphCreator();
 
-        Graph<Tuple2<String, Object>, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
-        System.out.println(metaDataGraph);
+//        Graph<Tuple2<String, Object>, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
+//        System.out.println(metaDataGraph);
 
-        GraphProcessor gp = new GraphProcessor();
+//        GraphProcessor gp = new GraphProcessor();
 //        gp.mapAttributes(metaDataGraph);
     }
 

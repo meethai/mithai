@@ -22,6 +22,6 @@ public class MQTTPublisherTest extends BaseTest {
         MQTTPublisher mqttPublisher = new MQTTPublisher(config.getProperty(MithaiProperties.MQTT_BROKER));
         String topic = config.getProperty(MithaiProperties.MQTT_TOPIC);
         AbstractData abstractData = new TemperatureData("test data", "test_222", "test_kelvin");
-        mqttPublisher.sendDataToTopic(abstractData, topic);
+//        mqttPublisher.sendDataToTopic(abstractData, topic);
     }
 }

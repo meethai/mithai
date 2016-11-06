@@ -16,7 +16,7 @@ public class ExporterTaskTest extends BaseTest {
     @Override
     public void test() throws Exception {
 
-        MessageStore messageStore = new MessageStore();
+        MessageStore messageStore = new MessageStore(5);
         for (int i = 0; i < 10; i++) {
             messageStore.addMessage(new ExportMessage("Message" + i));
         }
