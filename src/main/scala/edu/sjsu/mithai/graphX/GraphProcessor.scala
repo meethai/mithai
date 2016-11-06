@@ -1,91 +1,23 @@
 package edu.sjsu.mithai.graphX
 
-import org.apache.avro.generic.GenericRecord
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx._
-import org.apache.spark.{SparkConf, SparkContext}
-
-import scala.collection.mutable.ListBuffer
-
-
-/**
-  * Created by Madhura on 9/26/16.
-  */
 
 object GraphProcessor {
 
-  def main(args: Array[String]) {
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
-
-    class SomeData extends Serializable {
-      var data: Int = _
-
-      override def toString: String = {
-        "{ data= " + data + " }"
-      }
-    }
-
-    var a = new ListBuffer[SomeData]
-    for (i <- 0 to 10) {
-      val d = new SomeData
-      d.data = i
-      a += d
-    }
-
-    val gp = new GraphProcessor()
-
-    val conf = new SparkConf()
-      .setAppName("GraphCreator")
-      .setMaster("local[2]")
-
-    val sc = new SparkContext(conf)
-
-    val gc = new GraphCreator
-
-//    gp.process(gc.createGraph(a.toList, sc))
-  }
-
-}
-
-class GraphProcessor {
-
-
-
-  var sparkConfig: SparkConf = _
-
-  def setSparkConf(conf: SparkConf): Unit = {
-
-   sparkConfig = conf
-  }
-
-  def mapAttributes(graph: Graph[(String, Double), PartitionID], record: GenericRecord): Graph[(String, Double), PartitionID] = {
-
-    println(record.get("id"))
-    println(record.get(""))
-
-    val newGraph : Graph[(String, Double), PartitionID] = graph.mapVertices((id,attr) => {
-
-      var x: (String, Double) = ("", 0)
-      if (record.get("id").hashCode() == id)
-        x = (record.get("id").toString, record.get("value").asInstanceOf[Double]);
-      else
-        x = (attr)
-      x
+  def min(graph: Graph[(String, Double), PartitionID]): (VertexId, (String, Double)) = {
+    return graph.vertices.min()(new Ordering[Tuple2[VertexId, (String, Double)]]() {
+      override def compare(x: (VertexId, (String, Double)), y: (VertexId, (String, Double))): Int =
+        Ordering[Double].compare(x._2._2, y._2._2)
     })
-
-      newGraph.vertices.collect().foreach(x=> println("Graph Attribute---->>"+x))
-    return newGraph
   }
 
-  def process[D](graph: Graph[(D), Int]): Unit = {
-
-    //todo: Accept functiona as a parameter to process graph
-    println("Vertices Length:" + graph.vertices.count())
-    graph.vertices.collect().foreach(x => println(x + " Vertex"))
-    graph.edges.collect().foreach(println(_))
-
+  def max(graph: Graph[(String, Double), PartitionID]): (VertexId, (String, Double)) = {
+    return graph.vertices.max()(new Ordering[Tuple2[VertexId, (String, Double)]]() {
+      override def compare(x: (VertexId, (String, Double)), y: (VertexId, (String, Double))): Int =
+        Ordering[Double].compare(x._2._2, y._2._2)
+    })
   }
+
 }
 
 

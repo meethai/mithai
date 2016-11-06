@@ -4,9 +4,10 @@ import edu.sjsu.mithai.export.ExportMessage;
 import edu.sjsu.mithai.export.IExporter;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
@@ -26,13 +27,14 @@ public class HttpExporter implements IExporter {
 
     @Override
     public void send(ExportMessage message) throws IOException {
-        System.out.println("Sending message: " + message);
-
+//        System.out.println("Sending message: " + message);
         HttpPost post = new HttpPost(uri);
-        post.setEntity(new ByteArrayEntity(message.getMessage().getBytes()));
+        post.addHeader("content-type", "application/json");
+        post.setEntity(new StringEntity(message.getMessage()));
         CloseableHttpResponse response = client.execute(post);
 
-        System.out.println(response.getStatusLine());
+        EntityUtils.consume(response.getEntity());
+//        System.out.println(response.getStatusLine());
     }
 
     @Override

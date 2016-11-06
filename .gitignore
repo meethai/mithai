@@ -183,3 +183,4 @@ local.properties
 /logs/
 /README.md
 /deployable/
+!WebSer/bin

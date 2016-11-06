@@ -1,13 +1,11 @@
 package edu.sjsu.mithai.mqtt;
 
 import edu.sjsu.mithai.config.Configuration;
-import edu.sjsu.mithai.data.AvroSerializationHelper;
+import edu.sjsu.mithai.data.SensorData;
+import edu.sjsu.mithai.data.SensorDataSerializationHelper;
 import edu.sjsu.mithai.util.StoppableRunnableTask;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.log4j.Logger;
 import scala.reflect.ClassTag$;
-
-import java.io.IOException;
 
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_BROKER;
 import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
@@ -15,7 +13,7 @@ import static edu.sjsu.mithai.config.MithaiProperties.MQTT_TOPIC;
 public class MQTTDataReceiverTask extends StoppableRunnableTask {
 
     private static Logger logger = Logger.getLogger(MQTTDataReceiverTask.class);
-    private MQTTReciever dataReciever;
+    private MQTTDataReceiver<SensorData> dataReciever;
     private Configuration config;
 
     public MQTTDataReceiverTask(Configuration config) {
@@ -25,20 +23,23 @@ public class MQTTDataReceiverTask extends StoppableRunnableTask {
     @Override
     public void run() {
         logger.debug("Mqtt dataReciever running....");
-        dataReciever = new MQTTReciever<GenericRecord>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(GenericRecord.class));
-        AvroSerializationHelper av = new AvroSerializationHelper();
+        dataReciever = new MQTTDataReceiver<SensorData>(config.getProperty(MQTT_BROKER), config.getProperty(MQTT_TOPIC), ClassTag$.MODULE$.apply(SensorData.class));
+        SensorDataSerializationHelper avro = new SensorDataSerializationHelper();
+        dataReciever.setSerializationHelper(avro);
         try {
-            av.loadSchema("sensor.json");
-        } catch (IOException e) {
+            dataReciever.start();
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e);
         }
-        dataReciever.setSerializationHelper(av);
-        dataReciever.start();
     }
 
     @Override
     public void stop() {
         logger.debug("stopping...");
-        dataReciever.stop(true);
+
+        if (dataReciever != null) {
+            dataReciever.stop(false);
+        }
     }
 }

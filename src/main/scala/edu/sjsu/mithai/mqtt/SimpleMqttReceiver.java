@@ -6,6 +6,7 @@ import edu.sjsu.mithai.data.AvroSerializationHelper;
 import org.eclipse.paho.client.mqttv3.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class SimpleMqttReceiver implements MqttCallback {
 
@@ -14,7 +15,7 @@ public class SimpleMqttReceiver implements MqttCallback {
     private AvroSerializationHelper avro;
     private AvroSerializationHelper metadataAvro;
 
-    public SimpleMqttReceiver(Configuration configuration) throws MqttException, IOException {
+    public SimpleMqttReceiver(Configuration configuration) throws MqttException, IOException, URISyntaxException {
         this.configuration = configuration;
         avro = new AvroSerializationHelper();
         avro.loadSchema("sensor.json");

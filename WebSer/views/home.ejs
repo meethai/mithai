@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+<script type="application/javascript">
+    <!--var data = <%- vizData %>;-->
+    var x = {
+        nodes: [{id: 'node1', group: 0}, {id: 'node2', group: 1}, {id: 'node3', group: 2}, {
+            id: 'node5',
+            group: 3
+        }, {id: 'sensor1', group: 0}, {id: 'sensor2', group: 0}, {id: 'sensor3', group: 0}],
+        links: [{source: 'node1', target: 'node2', value: 30}, {
+            source: 'node1',
+            target: 'node3',
+            value: 30
+        }, {source: 'node1', target: 'node5', value: 30}, {
+            source: 'node1',
+            target: 'sensor1',
+            value: 10
+        }, {source: 'sensor1', target: 'sensor2', value: 1}, {
+            source: 'sensor1',
+            target: 'sensor3',
+            value: 1
+        }, {source: 'node1', target: 'sensor2', value: 10}, {
+            source: 'sensor2',
+            target: 'sensor1',
+            value: 1
+        }, {source: 'sensor2', target: 'sensor3', value: 1}, {
+            source: 'node1',
+            target: 'sensor3',
+            value: 10
+        }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
+    };
+    var data = x;
+</script>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Mithai</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="Search...">
+            </form>
+        </div>
+    </div>
+</nav>
+<!--<h4>data=<%= vizData %></h4>-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Analytics</a></li>
+                <li><a href="#">Export</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Dashboard</h1>
+            <svg id="graph" viewBox="0 0 600 480" perserveAspectRatio="xMinYMid"></svg>
+        </div>
+    </div>
+    <div class="row">
+        <div id="graph2" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="javascripts/d3_sample.js" defer></script>
+</html>
