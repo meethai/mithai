@@ -74,7 +74,7 @@ public class GraphVisualizationUtil {
 
     private final static int NODE_DISTANCE = 30;
     private final static int SENSOR_DEVICE_DISTANCE = 10;
-    private final static int SENSOR_DISTANCE = 1;
+    private final static int SENSOR_DISTANCE = 10;
 
     public static String parseGraphTuple(AvroGraphMetadata metadata) {
         String output = "";
@@ -98,7 +98,7 @@ public class GraphVisualizationUtil {
             NodeTuple tuple2 = new NodeTuple(localMetadata.getDeviceId(), tuple.getGroup());
             nodes.add(tuple2);
 
-            links.add(new LinkTuple(tuple.getId(), tuple2.getId(), SENSOR_DEVICE_DISTANCE));
+//            links.add(new LinkTuple(tuple.getId(), tuple2.getId(), SENSOR_DEVICE_DISTANCE));
 
             for (String connectedDevice: localMetadata.getConnectedDevices()) {
                 LinkTuple link2 = new LinkTuple(localMetadata.getDeviceId(), connectedDevice, SENSOR_DISTANCE);
