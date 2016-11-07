@@ -51,16 +51,17 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     logger.debug("=========================")
 
     if (Store.graph != null) {
-
       val min = GraphProcessor.min(Store.graph)
       val max = GraphProcessor.max(Store.graph)
       logger.debug("Min: " + min)
       logger.debug("Max: " + max)
-
+      logger.debug("NonZero" + GraphProcessor.getShortest(Store.graph))
+    
       var gson:Gson = new Gson()
       var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
 
       Store.messageStore.addMessage(new ExportMessage(message))
+
     }
   })
 

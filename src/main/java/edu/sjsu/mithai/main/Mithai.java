@@ -58,10 +58,10 @@ public class Mithai implements Observer {
 
         sensorStore = new SensorStore();
 
-        loadDevices();
+         loadDevices();
 
         //Start tasks here
-        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
+//        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
         TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
 
@@ -84,13 +84,17 @@ public class Mithai implements Observer {
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
+
+
+
+
     }
 
     private synchronized void loadDevices() {
         sensorStore.getDevices().clear();
 
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
-            sensorStore.addDevice(new TemperatureSensor("sensor" + i));
+            sensorStore.addDevice(new TemperatureSensor("spot" + i));
         }
     }
 

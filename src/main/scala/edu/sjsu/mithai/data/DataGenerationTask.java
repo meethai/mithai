@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DataGenerationTask extends StoppableExecutableTask {
 
@@ -43,9 +44,10 @@ public class DataGenerationTask extends StoppableExecutableTask {
     public void execute() {
 
         int index = 0;
+        Random random = new Random();
         for (IDevice device : sensorStore.getDevices()) {
             SensorData record = dataList.get(index++);
-            record.setValue(device.sense());
+            record.setValue((double) random.nextInt(2));
 
             try {
                 publisher.sendDataToTopic(avro.serialize(record), configuration.getProperty(MithaiProperties.MQTT_TOPIC));

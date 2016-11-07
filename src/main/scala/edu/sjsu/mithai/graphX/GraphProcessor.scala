@@ -18,6 +18,12 @@ object GraphProcessor {
     })
   }
 
+  def getShortest(graph: Graph[(String, Double), PartitionID]): Unit = {
+    graph.vertices.filter(v => {
+      v._2._2 > 0
+    }).collect().foreach(println(_))
+  }
+
 }
 
 
