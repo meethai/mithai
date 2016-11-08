@@ -9,6 +9,7 @@ function updateD3() {
         width = +svg.attr("width"),
         height = +svg.attr("height");
     console.log("w= " + width + " h= " + height);
+    console.log(data)
     var color = d3.scaleOrdinal(d3.schemeCategory20);
 
     var simulation = d3.forceSimulation()
