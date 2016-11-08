@@ -1,8 +1,5 @@
 package edu.sjsu.mithai.graphX
 
-import java.lang.reflect.Array
-
-import edu.sjsu.mithai.spark.Store
 import org.apache.spark.graphx._
 import org.apache.spark.graphx.lib.ShortestPaths
 
@@ -24,11 +21,21 @@ object GraphProcessor {
 
   def shortestPath(graph: Graph[(String, Double), PartitionID], from: VertexId): String = {
 
+    val firstVId = graph.vertices.filter({ case (v, x) => {
+      x._1 == ("sensor" + from)
+    }
+    }).first()
+    println("Vertex ID --->" + firstVId._1 + " with Data " + firstVId._2._1)
     val vert: Seq[VertexId] = graph.vertices.collect().map(x=>x._1).toSeq
     val result = ShortestPaths.run(graph, vert)
-    if (result != null) {
-      val shortPath = result.vertices.filter({ case (vId, _) => vId == from }).first()._2
-      println("Shortest Path from vertice: " + from + " is: " + shortPath.toString())
+    if (result.vertices != null && result.vertices.count() > 1) {
+      val shortPath = result.vertices.filter(
+        {
+          case (vid, path) => {
+            vid == firstVId._1
+          }
+        }).first()._2
+      println("Shortest Path from vertice: " + from + " is: " + shortPath)
       return shortPath.toString()
     }
     return "";
@@ -50,10 +57,10 @@ object GraphProcessor {
     else return f(graph);
   }
 
-  def main(args: Array[String]) {
-    graphOperation(max,Store.graph)
-    graphOperation(min,Store.graph)
-  }
+  //  def main(args: Array[String]) {
+  //    graphOperation(max,Store.graph)
+  //    graphOperation(min,Store.graph)
+  //  }
 }
 
 
