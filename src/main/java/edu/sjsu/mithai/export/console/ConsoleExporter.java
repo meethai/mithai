@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class ConsoleExporter implements IExporter {
+public class ConsoleExporter implements IExporter<ExportMessage> {
 
     final Logger logger = LoggerFactory.getLogger(ConsoleExporter.class);
 
