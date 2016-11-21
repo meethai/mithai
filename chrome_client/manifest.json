@@ -10,37 +10,33 @@
   },
   "icons": { "16": "fog-16.png", "128": "fog-128.png" },
   "permissions": [
-          "webview"
-        ],
-        "webview": {
-          "partitions": [
-            // In this example, any <webview partition="static"> or
-            // <webview partition="persist:static"> will have access to
-            // header.html, footer.html, and static.png.
-            {
-              "name": "static",
-              "accessible_resources": ["header.html", "footer.html", "static.png"]
-            },
-            // Also, any webview with a partition name beginning with "trusted"
-            // (e.g., "trusted-foo", "persist:trusted-bar") will have access to
-            // ".html" files beginning with "local_", as well as ".png" and ".js"
-            // files.
-            {
-              "name": "trusted*",
-              "accessible_resources": ["local_*.html", "*.png", "*.js"]
-            },
-            // In addition, any <webview partition="trusted-audio"> or
-            // <webview partition="persist:trusted-audio"> will have access to
-            // ".mp3" files. Note that this is in addition to "local_*.html",
-            // "*.png", "*.js" because "trusted-audio" also matches the "trusted*"
-            // pattern.
-            {
-              "name": "trusted-audio",
-              "accessible_resources": ["*.mp3"]
-            }
-            // Webviews in any other partition are denied access to packaged
-            // resources.
-          ]
-        }
+    "webview"
+  ],
+  "webview": {
+    "partitions": [
+      {
+        "name": "static",
+        "accessible_resources": [
+          "header.html",
+          "footer.html",
+          "static.png"
+        ]
+      },
+      {
+        "name": "trusted*",
+        "accessible_resources": [
+          "local_*.html",
+          "*.png",
+          "*.js"
+        ]
+      },
+      {
+        "name": "trusted-audio",
+        "accessible_resources": [
+          "*.mp3"
+        ]
+      }
+    ]
+  }
 
 }
