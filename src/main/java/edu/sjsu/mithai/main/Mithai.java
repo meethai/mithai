@@ -87,7 +87,7 @@ public class Mithai implements Observer {
         sensorStore.getDevices().clear();
 
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
-            sensorStore.addDevice(new TemperatureSensor("spot" + i));
+            sensorStore.addDevice(new TemperatureSensor("sensor" + i));
         }
     }
 

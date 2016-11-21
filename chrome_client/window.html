@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 </head>
 <body>
-<script type="application/javascript">
+<!-- <script type="application/javascript">
     var data = <%- vizData %>;
 
-</script>
+</script> -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -66,19 +64,13 @@
             </div>
         </div>
         <div id ="spark" class="row tab-pane">
-            <h1>Spark UI</h1>
-            <iframe src="http://localhost:4040/jobs"></iframe>
-            <div>
-                <object type="text/html" data="http://localhost:4040/jobs" width="800px" height="600px" style="overflow:auto;border:5px ridge blue">
-                </object>
-            </div>
-
+            <webview id="foo" src="http://localhost:4040/jobs" style="width:100%; height:480px"></webview>
         </div>
     </div>
 </div>
 </body>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="js/d3.js"></script>
+<script src="js/jquery-3.1.1.js"></script>
+<script src="js/bootstrap.js"></script>
 <script type="text/javascript" src="javascripts/d3_sample.js" defer></script>
-</html>
+</html>  
