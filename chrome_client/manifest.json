@@ -1,6 +1,6 @@
 {
-  "name": "Hello World!",
-  "description": "My first Chrome App.",
+  "name": "Fog Client",
+  "description": "A client to monitor spark jobs, view node graph and a demo alication for using the graph",
   "version": "0.1",
   "manifest_version": 2,
   "app": {
