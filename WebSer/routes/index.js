@@ -38,8 +38,9 @@ router.get('/', function(req, res, next) {
     // } else {
     //     // res.send(data);
     // }
-    console.log(data);
-    res.render('home.ejs', {"vizData": JSON.stringify(data)});
+    // console.log(data);
+    // res.render('home.ejs', {"vizData": JSON.stringify(data)});
+    res.send("Test successful!");
 });
 
 router.post('/ingress', function(req, res, next) {
