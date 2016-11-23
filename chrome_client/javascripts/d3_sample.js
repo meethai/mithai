@@ -22,8 +22,6 @@ $(document).ready(function () {
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
             height = +svg.attr("height");
-        console.log("w= " + width + " h= " + height);
-        console.log(data)
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
@@ -31,7 +29,7 @@ $(document).ready(function () {
                 return d.id;
             }))
             .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(svg.attr("width") / 2, svg.attr("height") / 2));
+            .force("center", d3.forceCenter(svg.attr("width") / 20, svg.attr("height") / 2));
         d3.select("#graph").attr("align", "center");
 
         var graph = data;
@@ -41,7 +39,7 @@ $(document).ready(function () {
             .selectAll("line")
             .data(graph.links)
             .enter().append("line")
-            // .attr("transform", "scale(2)")
+            .attr("transform", "scale(2)")
             .attr("stroke-width", function (d) {
                 return Math.sqrt(d.value);
             });
@@ -55,7 +53,7 @@ $(document).ready(function () {
             .attr("class", "g-wrap")
             .append("circle")
             .attr("r", 5)
-            // .attr("transform", "scale(2)")
+            .attr("transform", "scale(2)")
             .attr("fill", function (d) {
                 return color(d.group);
             })
@@ -66,6 +64,7 @@ $(document).ready(function () {
 
         svg.selectAll(".g-wrap")
             .append("svg:text")
+            .attr("transform", "scale(2)")
             .text(function (d) {
                 return d.id;
             })
