@@ -29,27 +29,23 @@ var y = {
         value: 10
     }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
 };
-/* GET home page. */
+/* GET Test page. */
 router.get('/', function(req, res, next) {
-    var data = cache.get('visualizationData');
-
-    // if (data === "undefined") {
-    //     // res.send("Visualization data is not present!");
-    // } else {
-    //     // res.send(data);
-    // }
-    // console.log(data);
-    // res.render('home.ejs', {"vizData": JSON.stringify(data)});
-    res.send("Test successful!");
+    res.send("<h1>Test successful!</h1>");
 });
 
+/*Endpoint to accept data*/
 router.post('/ingress', function(req, res, next) {
     cache.put('visualizationData', req.body);
     res.send("Hello world!");
 });
 
+/*Endpoint to get data expeced by client*/
 router.get('/data', function (req, res, next) {
-    res.send(JSON.stringify(y));
+    var data = cache.get('visualizationData');
+    if (data == null || data == "" || data === "undefined")
+        data = y;
+    res.send(JSON.stringify(data));
 });
 
 module.exports = router;
