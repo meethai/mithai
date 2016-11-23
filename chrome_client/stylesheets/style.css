@@ -134,3 +134,36 @@ body {
     width: 800px;
     height: 400px;
 }
+
+#lot {
+    height: 100%;
+    width: 100%;
+    float: left;
+    background-color: #333;
+    border-radius: 20px;
+    margin: 30px 0;
+    padding: 20px;
+}
+
+.spot {
+    background-color: #111;
+    border-radius: 20px;
+    margin: 25px auto;
+    transition: background 500ms;
+}
+
+.spot.hor {
+    height: 80px;
+    width: 150px;
+    margin: 5px;
+}
+
+.spot.ver {
+    height: 150px;
+    width: 100px;
+    margin: 5px;
+}
+
+.spot.green {
+    background: green;
+}

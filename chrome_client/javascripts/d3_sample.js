@@ -1,7 +1,7 @@
 /**
  * Created by kaustubh on 10/21/16.
  */
-var data = ""
+var data = "";
 $(document).ready(function () {
 
 
