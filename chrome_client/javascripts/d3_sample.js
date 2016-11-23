@@ -3,44 +3,15 @@
  */
 
 $(document).ready(function () {
-    // var x = {
-    //     nodes: [{id: 'node1', group: 0}, {id: 'node2', group: 1}, {id: 'node3', group: 2}, {
-    //         id: 'node5',
-    //         group: 3
-    //     }, {id: 'sensor1', group: 0}, {id: 'sensor2', group: 0}, {id: 'sensor3', group: 0}],
-    //     links: [{source: 'node1', target: 'node2', value: 30}, {
-    //         source: 'node1',
-    //         target: 'node3',
-    //         value: 30
-    //     }, {source: 'node1', target: 'node5', value: 30}, {
-    //         source: 'node1',
-    //         target: 'sensor1',
-    //         value: 10
-    //     }, {source: 'sensor1', target: 'sensor2', value: 1}, {
-    //         source: 'sensor1',
-    //         target: 'sensor3',
-    //         value: 1
-    //     }, {source: 'node1', target: 'sensor2', value: 10}, {
-    //         source: 'sensor2',
-    //         target: 'sensor1',
-    //         value: 1
-    //     }, {source: 'sensor2', target: 'sensor3', value: 1}, {
-    //         source: 'node1',
-    //         target: 'sensor3',
-    //         value: 10
-    //     }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
-    // };
 
-    // TODO Un comment
-    // data = x;
 
-    console.log("triggered");
-    triggerUpdate();
+    // console.log("triggered");
+    // triggerUpdate();
     // setTimeout(arguments.callee, 30000);
 
     function getData(func) {
         $.get("http://localhost:3000/data", function (d, s) {
-            console.log("Data: " + d + "\nStatus: " + s);
+            console.log("Status: " + s);
             data = JSON.parse(d);
             func();
         });
@@ -183,9 +154,5 @@ $(document).ready(function () {
     }
 
     $(window).on("resize", triggerUpdate).trigger("resize");
-    // $(function(){
-    //     var node = $(document.createElement('div'));
-    //     // node.createElement('iframe');
-    //     $("#spark").appendChild(node);
-    // });
+
 });
