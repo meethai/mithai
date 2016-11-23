@@ -169,4 +169,17 @@ $(document).ready(function () {
     $(window).on("resize", triggerUpdate).trigger("resize");
     updateIfChanged();
 
+    //setup web view
+    var webview = $('#github_webview');
+    var indicator = $(".indicator");
+
+    var loadstart = function () {
+        indicator.innerText = "loading...";
+    };
+    var loadstop = function () {
+        indicator.innerText = "";
+    };
+    webview.addEventListener("loadstart", loadstart);
+    webview.addEventListener("loadstop", loadstop);
+
 });
