@@ -16,7 +16,6 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
   Logger.getLogger("akka").setLevel(Level.ERROR)
 
   private var _serializationHelper: SerializationHelper[D] = _
-
   private var data: List[D] = _
 
   private val streamingObject = SparkStreamingObject
@@ -55,8 +54,9 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
       val max = GraphProcessor.max(Store.graph)
       logger.debug("Min: " + min)
       logger.debug("Max: " + max)
-      logger.debug("NonZero" + GraphProcessor.getShortest(Store.graph))
-    
+      logger.debug("Average: "+GraphProcessor.average(Store.graph))
+      logger.debug("Shortest Path" + GraphProcessor.shortestPath(Store.graph))
+
       var gson:Gson = new Gson()
       var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
 

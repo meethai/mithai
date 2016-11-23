@@ -85,9 +85,6 @@ public class Mithai implements Observer {
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
 
-
-
-
     }
 
     private synchronized void loadDevices() {
