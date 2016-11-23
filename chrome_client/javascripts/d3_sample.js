@@ -1,7 +1,7 @@
 /**
  * Created by kaustubh on 10/21/16.
  */
-
+var data = ""
 $(document).ready(function () {
 
 
@@ -140,13 +140,27 @@ $(document).ready(function () {
         }
     }
 
+    var stop = false;
+    //TODO use cache control
+    function updateIfChanged() {
+        var prev = JSON.stringify(data);
+        getData(function () {
+            if (_.isEqual(JSON.stringify(data), prev)) {
+                $('#graph').empty();
+                updateD3();
+            }
+        });
+
+        setTimeout(function () {
+            if (!stop) updateIfChanged()
+        }, 30000);
+    }
 
     function triggerUpdate() {
         var g = $("#graph"),
             aspect = g.width() / g.height(),
             container = g.parent();
         var targetWidth = container.width();
-        // console.log("called "+ targetWidth);
         g.attr("width", targetWidth / 2);
         g.attr("height", Math.round(targetWidth / aspect / 2));
         g.empty();
@@ -154,5 +168,6 @@ $(document).ready(function () {
     }
 
     $(window).on("resize", triggerUpdate).trigger("resize");
+    updateIfChanged();
 
 });
