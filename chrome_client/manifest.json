@@ -1,0 +1,42 @@
+{
+  "name": "Fog Client",
+  "description": "A client to monitor spark jobs, view node graph and a demo alication for using the graph",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js","javascripts/d3_sample.js"]
+    }
+  },
+  "icons": { "16": "fog-16.png", "128": "fog-128.png" },
+  "permissions": [
+    "webview"
+  ],
+  "webview": {
+    "partitions": [
+      {
+        "name": "static",
+        "accessible_resources": [
+          "header.html",
+          "footer.html",
+          "static.png"
+        ]
+      },
+      {
+        "name": "trusted*",
+        "accessible_resources": [
+          "local_*.html",
+          "*.png",
+          "*.js"
+        ]
+      },
+      {
+        "name": "trusted-audio",
+        "accessible_resources": [
+          "*.mp3"
+        ]
+      }
+    ]
+  }
+
+}
