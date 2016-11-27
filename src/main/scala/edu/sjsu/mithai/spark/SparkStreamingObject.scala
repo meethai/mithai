@@ -1,7 +1,7 @@
 package edu.sjsu.mithai.spark
 
-import edu.sjsu.mithai.export.{ExportMessage, MessageStore}
-import org.apache.spark.graphx.GraphXUtils
+import edu.sjsu.mithai.export.{ExportMessage, HttpExportMessage, MessageStore}
+import org.apache.spark.graphx.{Graph, GraphXUtils, PartitionID}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.mqtt.MQTTUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
@@ -34,7 +34,9 @@ object SparkStreamingObject{
     MQTTUtils.createStream(ssc, brokerUrl, topic)
 }
 
-object Store{
+object Store {
+  var httpMessageStore = new MessageStore[HttpExportMessage](10)
   var messageStore = new MessageStore[ExportMessage](10)
   var mqttMessageStore = new MessageStore[(String, String)](100)
+  var graph: Graph[(String, Double), PartitionID] = _
 }

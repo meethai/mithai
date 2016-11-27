@@ -12,6 +12,10 @@ public class Exporter {
         this.exporter = ExporterFactory.getExporter(configuration);
     }
 
+    public void setExporter(IExporter exporter) {
+        this.exporter = exporter;
+    }
+
     public IExporter getExporter() {
         return exporter;
     }

@@ -10,7 +10,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
-public class KafkaExporter implements IExporter {
+public class KafkaExporter implements IExporter<ExportMessage> {
     private final String servers;
     private KafkaProducer<String, String> producer;
     private String topic;

@@ -13,35 +13,8 @@
 </head>
 <body>
 <script type="application/javascript">
-    <!--var data = <%- vizData %>;-->
-    var x = {
-        nodes: [{id: 'node1', group: 0}, {id: 'node2', group: 1}, {id: 'node3', group: 2}, {
-            id: 'node5',
-            group: 3
-        }, {id: 'sensor1', group: 0}, {id: 'sensor2', group: 0}, {id: 'sensor3', group: 0}],
-        links: [{source: 'node1', target: 'node2', value: 30}, {
-            source: 'node1',
-            target: 'node3',
-            value: 30
-        }, {source: 'node1', target: 'node5', value: 30}, {
-            source: 'node1',
-            target: 'sensor1',
-            value: 10
-        }, {source: 'sensor1', target: 'sensor2', value: 1}, {
-            source: 'sensor1',
-            target: 'sensor3',
-            value: 1
-        }, {source: 'node1', target: 'sensor2', value: 10}, {
-            source: 'sensor2',
-            target: 'sensor1',
-            value: 1
-        }, {source: 'sensor2', target: 'sensor3', value: 1}, {
-            source: 'node1',
-            target: 'sensor3',
-            value: 10
-        }, {source: 'sensor3', target: 'sensor1', value: 1}, {source: 'sensor3', target: 'sensor2', value: 1}]
-    };
-    var data = x;
+    var data = <%- vizData %>;
+
 </script>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -57,10 +30,10 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Settings</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Help</a></li>
+                <li class="active"><a data-toggle="tab" href="#dashboard_tab">Dashboard</a></li>
+                <li><a data-toggle="tab" href="#spark">Spark</a></li>
+                <li><a data-toggle="tab" href="#">Profile</a></li>
+                <li><a data-toggle="tab" href="#">Help</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <input type="text" class="form-control" placeholder="Search...">
@@ -69,23 +42,36 @@
     </div>
 </nav>
 <!--<h4>data=<%= vizData %></h4>-->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Analytics</a></li>
-                <li><a href="#">Export</a></li>
-            </ul>
+<div class="container-fluid tab-container">
+    <div class = "tab-content">
+        <div id = "dashboard_tab" class="tab-pane active">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar">
+                    <ul class="nav nav-sidebar">
+                        <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                        <li><a href="#">Reports</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#">Export</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h1 class="page-header">Dashboard</h1>
+                    <svg id="graph" viewBox="0 0 600 480" perserveAspectRatio="xMinYMid"></svg>
+                </div>
+            </div>
+            <div class="row">
+                <div id="graph2" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+                </div>
+            </div>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Dashboard</h1>
-            <svg id="graph" viewBox="0 0 600 480" perserveAspectRatio="xMinYMid"></svg>
-        </div>
-    </div>
-    <div class="row">
-        <div id="graph2" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div id ="spark" class="row tab-pane">
+            <h1>Spark UI</h1>
+            <iframe src="http://localhost:4040/jobs"></iframe>
+            <div>
+                <object type="text/html" data="http://localhost:4040/jobs" width="800px" height="600px" style="overflow:auto;border:5px ridge blue">
+                </object>
+            </div>
 
         </div>
     </div>

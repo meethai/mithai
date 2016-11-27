@@ -1,8 +1,6 @@
 package edu.sjsu.mithai.graphX;
 
 import edu.sjsu.mithai.data.AvroGraphMetadata;
-import edu.sjsu.mithai.spark.SparkStreamingObject;
-import org.apache.spark.graphx.Graph;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -48,8 +46,8 @@ public class GraphCreatorTest {
 
         GraphCreator creator = new GraphCreator();
 
-        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
-        System.out.println(metaDataGraph);
+//        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
+//        System.out.println(metaDataGraph);
     }
 
     @Test
@@ -91,8 +89,8 @@ public class GraphCreatorTest {
 
         GraphCreator creator = new GraphCreator();
 
-        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
-        System.out.println(metaDataGraph);
+//        Graph<String, Object> metaDataGraph = creator.createMetaDataGraph(metadata, SparkStreamingObject.sparkContext());
+//        System.out.println(metaDataGraph);
     }
 
 }

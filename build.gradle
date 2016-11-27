@@ -13,7 +13,9 @@ apply plugin: 'scala'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: "com.commercehub.gradle.plugin.avro"
+apply plugin: 'application'
 
+mainClassName = "edu.sjsu.mithai.main.Mithai"
 compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
