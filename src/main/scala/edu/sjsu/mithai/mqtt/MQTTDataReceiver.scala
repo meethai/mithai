@@ -14,13 +14,10 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(MQTTDataReceiver.this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
   Logger.getLogger("akka").setLevel(Level.ERROR)
-
+  private val streamingObject = SparkStreamingObject
+  private val stream = streamingObject.getStream(brokerUrl, topic)
   private var _serializationHelper: SerializationHelper[D] = _
   private var data: List[D] = _
-
-  private val streamingObject = SparkStreamingObject
-
-  private val stream = streamingObject.getStream(brokerUrl, topic)
 
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x => println(x + "<--recieved raw"))
@@ -55,7 +52,7 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
       logger.debug("Min: " + min)
       logger.debug("Max: " + max)
       logger.debug("Average: "+GraphProcessor.average(Store.graph))
-      logger.debug("Shortest Path" + GraphProcessor.shortestPath(Store.graph))
+      logger.debug("Shortest Path" + GraphProcessor.shortestPath(Store.graph, "entry0"))
 
       var gson:Gson = new Gson()
       var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
