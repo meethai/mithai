@@ -1,0 +1,135 @@
+[
+  {
+    "deviceId": "entry0",
+    "connectedDevices": [
+      "lot1"
+    ]
+  },
+  {
+    "deviceId": "lot1",
+    "connectedDevices": [
+      "lot2"
+    ]
+  },
+  {
+    "deviceId": "lot2",
+    "connectedDevices": [
+      "lot3"
+    ]
+  },
+  {
+    "deviceId": "lot3",
+    "connectedDevices": [
+      "lot4"
+    ]
+  },
+  {
+    "deviceId": "lot4",
+    "connectedDevices": [
+      "lot5"
+    ]
+  }
+  ,
+  {
+    "deviceId": "lot5",
+    "connectedDevices": [
+      "waypoint0"
+    ]
+  },
+  {
+    "deviceId": "waypoint0",
+    "connectedDevices": [
+      "lot6",
+      "waypoint1"
+    ]
+  },
+  {
+    "deviceId": "lot6",
+    "connectedDevices": [
+      "lot7"
+    ]
+  },
+  {
+    "deviceId": "lot7",
+    "connectedDevices": [
+      "lot8"
+    ]
+  },
+  {
+    "deviceId": "lot8",
+    "connectedDevices": [
+      "lot9"
+    ]
+  },
+  {
+    "deviceId": "lot9",
+    "connectedDevices": [
+      "lot10"
+    ]
+  },
+  {
+    "deviceId": "lot10",
+    "connectedDevices": [
+      "lot11"
+    ]
+  },
+  {
+    "deviceId": "lot11",
+    "connectedDevices": [
+      "lot12"
+    ]
+  },
+  {
+    "deviceId": "lot12",
+    "connectedDevices": [
+      "lot13"
+    ]
+  },
+  {
+    "deviceId": "lot13",
+    "connectedDevices": [
+      "waypoint1"
+    ]
+  },
+  {
+    "deviceId": "waypoint1",
+    "connectedDevices": [
+      "lot14"
+    ]
+  },
+  {
+    "deviceId": "lot14",
+    "connectedDevices": [
+      "lot15"
+    ]
+  },
+  {
+    "deviceId": "lot15",
+    "connectedDevices": [
+      "lot16"
+    ]
+  },
+  {
+    "deviceId": "lot16",
+    "connectedDevices": [
+      "lot17"
+    ]
+  },
+  {
+    "deviceId": "lot17",
+    "connectedDevices": [
+      "lot18"
+    ]
+  },
+  {
+    "deviceId": "lot18",
+    "connectedDevices": [
+      "exit0"
+    ]
+  },
+  {
+    "deviceId": "exit0",
+    "connectedDevices": [
+    ]
+  }
+]
