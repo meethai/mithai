@@ -29,6 +29,6 @@ class MQTTPublisher(brokerUrl: String) {
         msgTopic.publish(message)
 
         // To avoid burst of messages
-        Thread.sleep(50)
+        Thread.sleep(100)
   }
 }

@@ -6,5 +6,4 @@ public interface IDevice {
 
     public String getId();
 
-    public void sendData();
 }

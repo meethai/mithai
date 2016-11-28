@@ -24,8 +24,8 @@ import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 
 public class Mithai implements Observer {
 
-    private static Configuration configuration;
-    private SensorStore sensorStore;
+    protected static Configuration configuration;
+    protected SensorStore sensorStore;
 
     public static void main(String[] args) throws Exception {
         Mithai mithai = new Mithai();
@@ -35,7 +35,7 @@ public class Mithai implements Observer {
             mithai.start(args[0]);
     }
 
-    private void start(String arg) throws Exception {
+    protected void start(String arg) throws Exception {
 
         Logger.getLogger("org").setLevel(Level.ERROR);
         Logger.getLogger("akka").setLevel(Level.ERROR);
@@ -84,7 +84,7 @@ public class Mithai implements Observer {
 
     }
 
-    private synchronized void loadDevices() {
+    protected synchronized void loadDevices() {
         sensorStore.getDevices().clear();
 
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
