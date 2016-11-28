@@ -2,8 +2,6 @@ package edu.sjsu.mithai.apps.parkinglot;
 
 import edu.sjsu.mithai.sensors.IDevice;
 
-import java.util.Random;
-
 public class DummyParkingSensor implements IDevice {
 
     private boolean isParked;
@@ -17,8 +15,8 @@ public class DummyParkingSensor implements IDevice {
     public double sense() {
 
         // TODO Remove these two lines to get correct data from sensors
-        Random random = new Random();
-        isParked = random.nextBoolean();
+//        Random random = new Random();
+//        isParked = random.nextBoolean();
 
         if (isParked) {
             return 1;

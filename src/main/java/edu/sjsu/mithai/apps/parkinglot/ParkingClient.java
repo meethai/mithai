@@ -12,8 +12,9 @@ public class ParkingClient extends StoppableRunnableTask {
         while (true) {
             System.out.println("===============PARKING APPLICATION===============");
             System.out.println("1. Park");
-            System.out.println("2. Status");
-            System.out.println("3. Exit");
+            System.out.println("2. Unpark");
+            System.out.println("3. Status");
+            System.out.println("4. Exit");
 
             Scanner in = new Scanner(System.in);
             int i = in.nextInt();
@@ -33,11 +34,25 @@ public class ParkingClient extends StoppableRunnableTask {
                     }
                     break;
                 case 2:
+                    System.out.println("Enter location to unpark:");
+                    location = in.next();
+                    if (!ParkingApplication.parkingSensorMap.containsKey(location)) {
+                        System.out.println("ERROR: Parking spot not present.");
+                        continue;
+                    } else if (!ParkingApplication.parkingSensorMap.get(location).isParked()) {
+                        System.out.println("Parking spot already empty!");
+                        continue;
+                    } else {
+                        ParkingApplication.parkingSensorMap.get(location).setParked(false);
+                    }
+                    break;
+
+                case 3:
                     for (String id : ParkingApplication.parkingSensorMap.keySet()) {
                         System.out.println(id + "=>" + ParkingApplication.parkingSensorMap.get(id).isParked());
                     }
                     break;
-                case 3:
+                case 4:
                     System.exit(0);
                 default:
                     System.out.println("Please enter valid choice.");
