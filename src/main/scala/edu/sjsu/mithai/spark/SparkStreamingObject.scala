@@ -24,9 +24,9 @@ object SparkStreamingObject{
   //TODO: add registration method for custom classes
   sparkConf.registerKryoClasses(Array(classOf[org.apache.avro.generic.GenericData.Record],
     classOf[org.apache.avro.generic.GenericRecord],classOf[edu.sjsu.mithai.data.AvroGraphMetadata], classOf[Object]))
-
-  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(5))
   val sparkContext: SparkContext = streamingContext.sparkContext
+  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
+
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,
                 topic: String,
