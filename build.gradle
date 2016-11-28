@@ -26,6 +26,11 @@ sourceSets.main.java.srcDirs = []
 sourceSets.test.scala.srcDir "src/test/java"
 sourceSets.test.java.srcDirs = []
 
+task( real_sensor, type: JavaExec ) {
+    main = 'edu.sjsu.mithai.apps.temperature.RealTemperatureSensor'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 repositories {
     mavenCentral()
 }
