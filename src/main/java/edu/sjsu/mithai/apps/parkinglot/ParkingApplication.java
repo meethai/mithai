@@ -44,4 +44,9 @@ public class ParkingApplication extends Mithai {
             sensorStore.addDevice(sensor);
         }
     }
+
+    @Override
+    protected synchronized void setupHandlers() {
+        TaskManager.getInstance().addHandler(new ParkingResponseHandler());
+    }
 }
