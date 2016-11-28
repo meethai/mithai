@@ -26,7 +26,11 @@ object GraphProcessor {
 
     println("Vertex ID --->" + firstVId)
     val vert: Seq[VertexId] = graph.vertices.collect().map(x=>x._1).toSeq
-    val result = ShortestPaths.run(graph, vert)
+    //VertexIDs of only available slots to park
+    val available: Seq[VertexId] = graph.vertices.collect().filter(x => x._2._2.!=(1)).map(x => x._1).toSeq
+    println("Available Slots-->" + available)
+    val result = ShortestPaths.run(graph, available)
+
     if (result.vertices != null && result.vertices.count() > 1) {
       val shortPath = result.vertices.filter(
         {
@@ -34,9 +38,12 @@ object GraphProcessor {
             vid == firstVId
           }
         }).first()._2
+
+      println("Shortest Path Map---->" + shortPath.toString())
+
       //Finds the non zero min value
       var second = shortPath.filterNot(_._2 == 0).min
-      println("Shortest Path from vertices " + entry + " is: " + second._1 + " with length: " + second._2)
+      println("Shortest Path from vertices " + firstVId + " is: " + second._1 + " with length: " + second._2)
       return second._1.toString
     }
     return null;
