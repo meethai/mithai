@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
 public class RealTemperatureSensor implements IDevice {
 
     private static int RETRY_COUNT = 3;
-    private static String COMMAND = "echo";
-    private static String ARGS = "FAIL";
+    private static String COMMAND = "python";
+    private static String ARGS = "/home/pi/mithai/src/main/resources/dht11_example.py";
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -29,7 +29,6 @@ public class RealTemperatureSensor implements IDevice {
             try {
                 String value = readSensorValue();
 
-                System.out.println(value);
                 if (!value.equals("FAIL")) {
                     return Double.parseDouble(value);
                 }
@@ -67,9 +66,5 @@ public class RealTemperatureSensor implements IDevice {
             return ID;
         }
 
-        @Override
-        public void sendData () {
-
-        }
     }
 
