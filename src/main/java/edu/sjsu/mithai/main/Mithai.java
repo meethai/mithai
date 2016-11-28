@@ -56,6 +56,7 @@ public class Mithai implements Observer {
 
          loadDevices();
 
+        TaskManager.getInstance().addHandler(new MithaiHandler());
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
@@ -76,7 +77,7 @@ public class Mithai implements Observer {
         }
 
         // Start Streaming context
-        Thread.sleep(9 * 1000);
+        Thread.sleep(14 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
