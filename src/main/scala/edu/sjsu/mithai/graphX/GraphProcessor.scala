@@ -24,7 +24,7 @@ object GraphProcessor {
     //TODO : List entry points in the graph (Need to add identifiers in graph properties)
     val firstVId = entry.hashCode
 
-    println("Vertex ID --->" + firstVId + " with Data " + firstVId)
+    println("Vertex ID --->" + firstVId)
     val vert: Seq[VertexId] = graph.vertices.collect().map(x=>x._1).toSeq
     val result = ShortestPaths.run(graph, vert)
     if (result.vertices != null && result.vertices.count() > 1) {
@@ -34,17 +34,16 @@ object GraphProcessor {
             vid == firstVId
           }
         }).first()._2
-      println("Shortest Path from vertices " + entry + " is: " + shortPath)
-      return shortPath.toString()
+      //Finds the non zero min value
+      var second = shortPath.filterNot(_._2 == 0).min
+      println("Shortest Path from vertices " + entry + " is: " + second._1 + " with length: " + second._2)
+      return second._1.toString
     }
     return null;
   }
 
   def average(graph: Graph[(String, Double), PartitionID]): Double = {
-    val sum: Double =0
-    graph.vertices.collect().foreach(x => sum + x._2._2)
-    val average  = sum/graph.vertices.count()
-    return average
+    return graph.vertices.map(_._2._2).sum() / graph.vertices.count()
   }
 
   def graphOperation(f:Graph[(String, Double), PartitionID] => (VertexId, (String, Double)), graph: Graph[(String, Double), PartitionID]): (VertexId, (String, Double)) = {
