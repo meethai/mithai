@@ -19,29 +19,25 @@ object GraphProcessor {
     })
   }
 
-  def shortestPath(graph: Graph[(String, Double), PartitionID]): String = {
+  def shortestPath(graph: Graph[(String, Double), PartitionID], entry: String): String = {
 
     //TODO : List entry points in the graph (Need to add identifiers in graph properties)
-    val entry = 10
-    //sensor ID of entry point
-    val firstVId = graph.vertices.filter({ case (v, x) => {
-      x._1 == ("sensor" + entry)
-    }
-    }).first()
-    println("Vertex ID --->" + firstVId._1 + " with Data " + firstVId._2._1)
+    val firstVId = entry.hashCode
+
+    println("Vertex ID --->" + firstVId + " with Data " + firstVId)
     val vert: Seq[VertexId] = graph.vertices.collect().map(x=>x._1).toSeq
     val result = ShortestPaths.run(graph, vert)
     if (result.vertices != null && result.vertices.count() > 1) {
       val shortPath = result.vertices.filter(
         {
           case (vid, path) => {
-            vid == firstVId._1
+            vid == firstVId
           }
         }).first()._2
       println("Shortest Path from vertices " + entry + " is: " + shortPath)
       return shortPath.toString()
     }
-    return "";
+    return null;
   }
 
   def average(graph: Graph[(String, Double), PartitionID]): Double = {
