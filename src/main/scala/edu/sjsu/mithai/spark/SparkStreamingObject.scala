@@ -25,7 +25,7 @@ object SparkStreamingObject{
   sparkConf.registerKryoClasses(Array(classOf[org.apache.avro.generic.GenericData.Record],
     classOf[org.apache.avro.generic.GenericRecord],classOf[edu.sjsu.mithai.data.AvroGraphMetadata], classOf[Object]))
 
-  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(5))
+  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(20))
   val sparkContext: SparkContext = streamingContext.sparkContext
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,

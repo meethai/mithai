@@ -4,22 +4,24 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.main.Mithai;
+import edu.sjsu.mithai.util.TaskManager;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ParkingApplication extends Mithai {
 
-    private Map<String, DummyParkingSensor> parkingSensorMap;
+    static Map<String, DummyParkingSensor> parkingSensorMap;
 
     public ParkingApplication() {
-        this.parkingSensorMap = new HashMap<>();
+        parkingSensorMap = new LinkedHashMap<>();
     }
 
     public static void main(String[] args) {
         ParkingApplication app = new ParkingApplication();
         try {
             app.start(args[0]);
+            TaskManager.getInstance().submitTask(new ParkingClient());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,6 +43,5 @@ public class ParkingApplication extends Mithai {
             parkingSensorMap.put(sensor.getId(), sensor);
             sensorStore.addDevice(sensor);
         }
-
     }
 }

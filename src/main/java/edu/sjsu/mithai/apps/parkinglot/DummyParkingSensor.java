@@ -16,8 +16,8 @@ public class DummyParkingSensor implements IDevice {
     @Override
     public double sense() {
 
+        // TODO Remove these two lines to get correct data from sensors
         Random random = new Random();
-
         isParked = random.nextBoolean();
 
         if (isParked) {
