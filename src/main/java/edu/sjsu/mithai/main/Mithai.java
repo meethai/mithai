@@ -45,18 +45,19 @@ public class Mithai implements Observer {
         Runtime.getRuntime().addShutdownHook(new ShutDownHook());
 
         //TODO file path will be provided by user
-        if(arg==null || arg.equals("")) {
+        if (arg == null || arg.equals("")) {
             File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            configuration = new Configuration(configFile.getParent()+"/application.properties");
-        }
-        else
+            configuration = new Configuration(configFile.getParent() + "/application.properties");
+        } else
             configuration = new Configuration(arg);
 
         sensorStore = new SensorStore();
 
-         loadDevices();
+        loadDevices();
 
-        TaskManager.getInstance().addHandler(new MithaiHandler());
+        setupHandlers();
+
+
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
@@ -90,6 +91,10 @@ public class Mithai implements Observer {
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
             sensorStore.addDevice(new TemperatureSensor("sensor" + i));
         }
+    }
+
+    protected synchronized void setupHandlers() {
+        TaskManager.getInstance().addHandler(new MithaiHandler());
     }
 
     @Override
