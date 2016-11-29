@@ -16,13 +16,13 @@ public class ExporterTaskTest extends BaseTest {
     @Override
     public void test() throws Exception {
 
-        MessageStore messageStore = new MessageStore();
+        MessageStore messageStore = new MessageStore(10);
         for (int i = 0; i < 10; i++) {
             messageStore.addMessage(new ExportMessage("Message" + i));
         }
         System.out.println(messageStore);
-        TaskManager.getInstance().submitTask(new ExporterTask(config, messageStore));
+        TaskManager.getInstance().submitTask(new HttpExporterTask(config));
 
-        stopAfter(10);
+        stopAfter(50);
     }
 }

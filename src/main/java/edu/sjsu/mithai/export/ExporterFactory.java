@@ -24,7 +24,7 @@ public class ExporterFactory {
                         configuration.getProperty(EXPORTER_REMOTE_URI));
 
             case "HTTP":
-                return new HttpExporter(configuration.getProperty(EXPORTER_REMOTE_URI));
+                return new HttpExporter();
 
             case "CONSOLE":
                 return new ConsoleExporter();

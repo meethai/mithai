@@ -1,7 +1,6 @@
 package edu.sjsu.mithai.graphX;
 
 import edu.sjsu.mithai.util.BaseTest;
-import edu.sjsu.mithai.util.TaskManager;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class GraphTaskTest extends BaseTest{
     @Test
     @Override
     public void test() {
-        TaskManager.getInstance().submitTask(new GraphTask());
+//        TaskManager.getInstance().submitTask(new GraphTask());
         stopAfter(15);
     }
 }

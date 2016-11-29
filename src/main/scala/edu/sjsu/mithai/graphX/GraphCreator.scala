@@ -2,7 +2,10 @@ package edu.sjsu.mithai.graphX
 
 import java.util
 
+import edu.sjsu.mithai.GraphVisualizationUtil
 import edu.sjsu.mithai.data.AvroGraphMetadata
+import edu.sjsu.mithai.export.HttpExportMessage
+import edu.sjsu.mithai.spark.Store
 import org.apache.log4j.Logger
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx._
@@ -14,6 +17,7 @@ import scala.collection.mutable.ListBuffer
 class GraphCreator {
 
   val logger:Logger = Logger.getLogger(GraphCreator.this.getClass)
+  val visualizationUtil = new GraphVisualizationUtil
 
   def createMetaDataGraph(existingGraph:Graph[(String, Double), PartitionID], agm:AvroGraphMetadata , sc:SparkContext):Graph[(String, Double),PartitionID]={
 
@@ -48,7 +52,10 @@ class GraphCreator {
       output = graph
     }
 
-    return output
+    println("Metadata Task")
+    var visualization = visualizationUtil.prepareGraphVisualization(output)
+    Store.httpMessageStore.addMessage(new HttpExportMessage(visualization, "http://localhost:3000/ingress"))
+    output
 
   }
 }

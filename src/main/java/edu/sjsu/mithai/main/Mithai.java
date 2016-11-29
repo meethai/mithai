@@ -7,6 +7,7 @@ import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
 import edu.sjsu.mithai.export.ExporterTask;
+import edu.sjsu.mithai.export.HttpExporterTask;
 import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
@@ -14,12 +15,15 @@ import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.spark.SparkStreamingObject;
 import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import static edu.sjsu.mithai.config.MithaiProperties.EXPORTER_TYPE;
 import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 
 public class Mithai implements Observer {
@@ -37,6 +41,9 @@ public class Mithai implements Observer {
 
     private void start(String arg) throws Exception {
 
+        Logger.getLogger("org").setLevel(Level.ERROR);
+        Logger.getLogger("akka").setLevel(Level.ERROR);
+
         ConfigFileObservable.getInstance().addObserver(this);
 
         Runtime.getRuntime().addShutdownHook(new ShutDownHook());
@@ -45,18 +52,16 @@ public class Mithai implements Observer {
         if(arg==null || arg.equals("")) {
             File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             configuration = new Configuration(configFile.getParent()+"/application.properties");
-            System.out.println(configFile.getAbsolutePath());
         }
         else
             configuration = new Configuration(arg);
-
 
         sensorStore = new SensorStore();
 
          loadDevices();
 
         //Start tasks here
-        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
+//        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
         TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
 
@@ -68,12 +73,14 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-        TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
 
-       // SimpleMqttReceiver receiver = new SimpleMqttReceiver(configuration);
+        if (!configuration.getProperty(EXPORTER_TYPE).equals("HTTP")) {
+            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+        }
 
         // Start Streaming context
-        Thread.sleep(7 * 1000);
+        Thread.sleep(5 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
@@ -108,7 +115,7 @@ public class Mithai implements Observer {
         }
     }
 
-    static class ShutDownHook extends Thread {
+    private static class ShutDownHook extends Thread {
 
         @Override
         public void run() {

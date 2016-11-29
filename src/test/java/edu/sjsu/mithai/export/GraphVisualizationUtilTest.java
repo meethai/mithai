@@ -43,8 +43,6 @@ public class GraphVisualizationUtilTest {
 
         metadata.setLocalGraph(localGraph);
 
-        System.out.println(GraphVisualizationUtil.parseGraphTuple(metadata));
-
     }
 
 }
