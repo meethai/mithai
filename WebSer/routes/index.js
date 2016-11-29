@@ -36,7 +36,23 @@ router.get('/', function(req, res, next) {
 
 /*Endpoint to accept data*/
 router.post('/ingress', function(req, res, next) {
-    cache.put('visualizationData', req.body);
+    var d = {
+        nodes: [],
+        links: []
+    };
+
+    var raw = req.body;
+    if (raw !== "undefined" || raw != "" || raw != null) {
+        console.log(raw);
+        raw.nodes.forEach(function (e, i) {
+            d.nodes.push({id: e._1, group: e._3});
+        });
+        raw.links.forEach(function (e, i) {
+            d.links.push({source: e._1, target: e._2, value: e._3 <= 0 ? 10 : e._3});
+        });
+        console.log(d);
+        cache.put('visualizationData', d);
+    }
     res.send("Hello world!");
 });
 

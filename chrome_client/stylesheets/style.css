@@ -137,18 +137,17 @@ body {
 
 #lot {
     height: 100%;
-    width: 100%;
+    width: 80%;
     float: left;
     background-color: #333;
-    border-radius: 20px;
-    margin: 30px 0;
-    padding: 20px;
+    border-radius: 5px;
+    margin: 30px;
+    padding: 30px;
 }
 
 .spot {
     background-color: #111;
-    border-radius: 20px;
-    margin: 25px auto;
+    border-radius: 5px;
     transition: background 500ms;
 }
 
@@ -159,11 +158,27 @@ body {
 }
 
 .spot.ver {
-    height: 150px;
-    width: 100px;
-    margin: 5px;
+    height: 70px;
+    width: 40px;
+    /*margin: 5px;*/
 }
 
 .spot.green {
     background: green;
+}
+
+.line {
+    /*float: left;*/
+    height: 70px;
+    width: 3px;
+    /*margin: 2px;*/
+    background-color: grey;
+    transition: background 500ms;
+}
+
+.spot-wrapper {
+    /*float: left;*/
+    margin: 5px;
+    overflow: hidden;
+
 }
