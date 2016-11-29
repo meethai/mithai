@@ -5,6 +5,7 @@ import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
+import edu.sjsu.mithai.export.HttpExporterTask;
 import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
@@ -71,7 +72,7 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-//        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
+        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
 
         if (!configuration.getProperty(EXPORTER_TYPE).equals("HTTP")) {
 //            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
