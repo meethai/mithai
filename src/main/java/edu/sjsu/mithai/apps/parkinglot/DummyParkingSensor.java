@@ -1,0 +1,40 @@
+package edu.sjsu.mithai.apps.parkinglot;
+
+import edu.sjsu.mithai.sensors.IDevice;
+
+public class DummyParkingSensor implements IDevice {
+
+    private boolean isParked;
+    private String id;
+
+    public DummyParkingSensor(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public double sense() {
+
+        // TODO Remove these two lines to get correct data from sensors
+//        Random random = new Random();
+//        isParked = random.nextBoolean();
+
+        if (isParked) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public boolean isParked() {
+        return isParked;
+    }
+
+    public void setParked(boolean parked) {
+        isParked = parked;
+    }
+}

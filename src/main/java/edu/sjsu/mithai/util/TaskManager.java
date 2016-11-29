@@ -13,10 +13,12 @@ public class TaskManager {
 
     private List<Stoppable> tasks;
     private ExecutorService threadPool;
+    private List<Ihandler> handlers;
 
     private TaskManager() {
         this.threadPool = Executors.newCachedThreadPool();
         this.tasks = new ArrayList<>();
+        this.handlers = new ArrayList<>();
     }
 
     public static TaskManager getInstance() {
@@ -58,5 +60,13 @@ public class TaskManager {
                 task.stop();
             }
         }
+    }
+
+    public List<Ihandler> getHandlers() {
+        return handlers;
+    }
+
+    public void addHandler(Ihandler handler) {
+        handlers.add(handler);
     }
 }

@@ -1,8 +1,6 @@
 package edu.sjsu.mithai.mqtt
 
-import com.google.gson.Gson
 import edu.sjsu.mithai.data._
-import edu.sjsu.mithai.export.ExportMessage
 import edu.sjsu.mithai.graphX.GraphProcessor
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.log4j.{Level, Logger}
@@ -14,14 +12,10 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
   private val logger: Logger = Logger.getLogger(MQTTDataReceiver.this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
   Logger.getLogger("akka").setLevel(Level.ERROR)
-
-  private var _serializationHelper: SerializationHelper[D] = _
-
-  private var data: List[D] = _
-
   private val streamingObject = SparkStreamingObject
-
   private val stream = streamingObject.getStream(brokerUrl, topic)
+  private var _serializationHelper: SerializationHelper[D] = _
+  private var data: List[D] = _
 
   stream.foreachRDD(r => {
     r.collect().toList.foreach(x => println(x + "<--recieved raw"))
@@ -53,15 +47,16 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     if (Store.graph != null) {
       val min = GraphProcessor.min(Store.graph)
       val max = GraphProcessor.max(Store.graph)
-      logger.debug("Min: " + min)
-      logger.debug("Max: " + max)
-      logger.debug("NonZero" + GraphProcessor.getShortest(Store.graph))
-    
-      var gson:Gson = new Gson()
-      var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
+      val average = GraphProcessor.average(Store.graph)
+      val shortestPath = GraphProcessor.shortestPath(Store.graph, "entry0")
+      //      logger.debug("Min: " + min)
+      //      logger.debug("Max: " + max)
+      //      logger.debug("Average: "+GraphProcessor.average(Store.graph))
+      //      logger.debug("Shortest Path: " + GraphProcessor.shortestPath(Store.graph, "entry0"))
 
-      Store.messageStore.addMessage(new ExportMessage(message))
-
+      //      var gson:Gson = new Gson()
+      //      var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
+      //      Store.messageStore.addMessage(new ExportMessage(message))
     }
   })
 

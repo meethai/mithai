@@ -1,19 +1,15 @@
 package edu.sjsu.mithai.main;
 
 import edu.sjsu.mithai.config.ConfigFileObservable;
-import edu.sjsu.mithai.config.ConfigMonitorTask;
 import edu.sjsu.mithai.config.Configuration;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
-import edu.sjsu.mithai.export.ExporterTask;
-import edu.sjsu.mithai.export.HttpExporterTask;
 import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.spark.SparkStreamingObject;
-import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -28,8 +24,8 @@ import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 
 public class Mithai implements Observer {
 
-    private static Configuration configuration;
-    private SensorStore sensorStore;
+    protected static Configuration configuration;
+    protected SensorStore sensorStore;
 
     public static void main(String[] args) throws Exception {
         Mithai mithai = new Mithai();
@@ -39,7 +35,7 @@ public class Mithai implements Observer {
             mithai.start(args[0]);
     }
 
-    private void start(String arg) throws Exception {
+    protected void start(String arg) throws Exception {
 
         Logger.getLogger("org").setLevel(Level.ERROR);
         Logger.getLogger("akka").setLevel(Level.ERROR);
@@ -49,16 +45,18 @@ public class Mithai implements Observer {
         Runtime.getRuntime().addShutdownHook(new ShutDownHook());
 
         //TODO file path will be provided by user
-        if(arg==null || arg.equals("")) {
+        if (arg == null || arg.equals("")) {
             File configFile = new File(Mithai.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            configuration = new Configuration(configFile.getParent()+"/application.properties");
-        }
-        else
+            configuration = new Configuration(configFile.getParent() + "/application.properties");
+        } else
             configuration = new Configuration(arg);
 
         sensorStore = new SensorStore();
 
-         loadDevices();
+        loadDevices();
+
+        setupHandlers();
+
 
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
@@ -73,29 +71,30 @@ public class Mithai implements Observer {
 
         TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
 
-        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
+//        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
 
         if (!configuration.getProperty(EXPORTER_TYPE).equals("HTTP")) {
-            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+//            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
         }
 
         // Start Streaming context
-        Thread.sleep(5 * 1000);
+        Thread.sleep(14 * 1000);
         SparkStreamingObject.streamingContext().start();
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
 
-
-
-
     }
 
-    private synchronized void loadDevices() {
+    protected synchronized void loadDevices() {
         sensorStore.getDevices().clear();
 
         for (int i = 1; i<= Integer.parseInt(configuration.getProperty(NUMBER_OF_SENSORS)); i++) {
             sensorStore.addDevice(new TemperatureSensor("sensor" + i));
         }
+    }
+
+    protected synchronized void setupHandlers() {
+        TaskManager.getInstance().addHandler(new MithaiHandler());
     }
 
     @Override
