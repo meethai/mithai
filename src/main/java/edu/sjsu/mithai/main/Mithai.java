@@ -2,10 +2,10 @@ package edu.sjsu.mithai.main;
 
 import edu.sjsu.mithai.config.ConfigFileObservable;
 import edu.sjsu.mithai.config.Configuration;
+import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
-import edu.sjsu.mithai.export.HttpExporterTask;
 import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
@@ -26,6 +26,7 @@ import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 public class Mithai implements Observer {
 
     protected static Configuration configuration;
+    protected static Configuration config;
     protected SensorStore sensorStore;
 
     public static void main(String[] args) throws Exception {
@@ -62,17 +63,27 @@ public class Mithai implements Observer {
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
-        TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+        String type = configuration.getProperty(MithaiProperties.TASK_LIST);
+        String[] tasks = type.split(",");
 
-        TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
+        for (String task : tasks) {
 
-        TaskManager.getInstance().submitTask(new MQTTPublisherTask(configuration));
+            task = task.trim();
+            if (task.equals("MQTTDataReceiverTask")) {
+                TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+            } else if (task.equals("MQTTMetaDataRecieverTask")) {
+                TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
+            } else if (task.equals("MQTTPublisherTask")) {
+                TaskManager.getInstance().submitTask(new MQTTPublisherTask(configuration));
 
-        TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+            } else if (task.equals("DataGenerationTask")) {
+                TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
+            } else if (task.equals("MetadataGenerationTask")) {
+                TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
+            }
 
-        TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
-
-        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
+        }
+//        TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
 
         if (!configuration.getProperty(EXPORTER_TYPE).equals("HTTP")) {
 //            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
