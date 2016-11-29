@@ -25,4 +25,7 @@ public interface MithaiProperties {
     String EXPORTER_KAFKA_TOPIC = "EXPORTER_KAFKA_TOPIC";
     String EXPORTER_TIME_INTERVAL = "EXPORTER_TIME_INTERVAL";
 
+    //Graph Processor Tasks
+    String ENTRY = "ENTRY";
+    String TASK_LIST = "TASK_LIST";
 }
