@@ -1,6 +1,5 @@
 package edu.sjsu.mithai.apps.temperature;
 
-import com.sun.org.apache.xpath.internal.Arg;
 import edu.sjsu.mithai.sensors.IDevice;
 
 import java.io.BufferedReader;
@@ -11,12 +10,18 @@ import java.io.InputStreamReader;
 public class RealTemperatureSensor implements IDevice {
 
     private static int RETRY_COUNT = 3;
+
     private static String COMMAND = "python";
     private static String ARGS = "/home/pi/mithai/src/main/resources/dht11_example.py";
 
+    private String id;
+
+    public RealTemperatureSensor(String id) {
+        this.id = id;
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        RealTemperatureSensor temperatureSensor = new RealTemperatureSensor();
+        RealTemperatureSensor temperatureSensor = new RealTemperatureSensor("TemperatureSensor1");
         System.out.println(temperatureSensor.sense());
     }
 
@@ -59,12 +64,10 @@ public class RealTemperatureSensor implements IDevice {
         return line;
     }
 
-        @Override
-        public String getId () {
-            String ID;
-            ID = "Sensor 1";
-            return ID;
-        }
-
+    @Override
+    public String getId() {
+        return id;
     }
+
+}
 
