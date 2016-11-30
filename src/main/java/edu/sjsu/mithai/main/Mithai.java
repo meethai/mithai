@@ -27,7 +27,6 @@ import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 public class Mithai implements Observer {
 
     protected static Configuration configuration;
-    protected static Configuration config;
     protected SensorStore sensorStore;
 
     public static void main(String[] args) throws Exception {
@@ -36,6 +35,10 @@ public class Mithai implements Observer {
             mithai.start(null);
         else
             mithai.start(args[0]);
+    }
+
+    public static Configuration getConfiguration() {
+        return configuration;
     }
 
     protected void start(String arg) throws Exception {
