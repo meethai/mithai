@@ -27,8 +27,8 @@ import static edu.sjsu.mithai.config.MithaiProperties.NUMBER_OF_SENSORS;
 public class Mithai implements Observer {
 
     protected static Configuration configuration;
-    protected static Configuration config;
     protected SensorStore sensorStore;
+
 
     public static void main(String[] args) throws Exception {
         Mithai mithai = new Mithai();
@@ -36,6 +36,10 @@ public class Mithai implements Observer {
             mithai.start(null);
         else
             mithai.start(args[0]);
+    }
+
+    public static Configuration getConfiguration() {
+        return configuration;
     }
 
     protected void start(String arg) throws Exception {
@@ -60,7 +64,7 @@ public class Mithai implements Observer {
 
         setupHandlers();
 
-
+        boolean receiverTask = false;
         //Start tasks here
 //        TaskManager.getInstance().submitTask(new ConfigMonitorTask(configuration));
 
@@ -68,16 +72,18 @@ public class Mithai implements Observer {
         String[] tasks = type.split(",");
 
         for (String task : tasks) {
-
             task = task.trim();
             if (task.equals("MQTTDataReceiverTask")) {
                 TaskManager.getInstance().submitTask(new MQTTDataReceiverTask(configuration));
+                receiverTask = true;
             } else if (task.equals("MQTTMetaDataRecieverTask")) {
                 TaskManager.getInstance().submitTask(new MQTTMetaDataRecieverTask(configuration));
-            } else if (task.equals("MQTTPublisherTask")) {
+                receiverTask = true;
+            }
+            if (task.equals("MQTTPublisherTask")) {
                 TaskManager.getInstance().submitTask(new MQTTPublisherTask(configuration));
-
-            } else if (task.equals("DataGenerationTask")) {
+            }
+            if (task.equals("DataGenerationTask")) {
                 TaskManager.getInstance().submitTask(new DataGenerationTask(configuration, sensorStore));
             } else if (task.equals("MetadataGenerationTask")) {
                 TaskManager.getInstance().submitTask(new MetadataGenerationTask(configuration));
@@ -91,11 +97,12 @@ public class Mithai implements Observer {
         }
 
         // Start Streaming context
-        Thread.sleep(7 * 1000);
-        SparkStreamingObject.streamingContext().start();
+        Thread.sleep(9 * 1000);
+        if (receiverTask) {
+            SparkStreamingObject.streamingContext().start();
+        }
 //        // Stop all tasks and wait 60 seconds to finish them
 //        TaskManager.getInstance().stopAll();
-
     }
 
     protected synchronized void loadDevices() {

@@ -1,7 +1,9 @@
 package edu.sjsu.mithai.mqtt
 
+import edu.sjsu.mithai.config.MithaiProperties
 import edu.sjsu.mithai.data._
 import edu.sjsu.mithai.graphX.GraphProcessor
+import edu.sjsu.mithai.main.Mithai
 import edu.sjsu.mithai.spark.{SparkStreamingObject, Store}
 import org.apache.log4j.{Level, Logger}
 
@@ -17,7 +19,7 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
   private var _serializationHelper: SerializationHelper[D] = _
   private var data: List[D] = _
 
-  stream.foreachRDD(r => {
+  stream.foreachRDD(foreachFunc = r => {
     r.collect().toList.foreach(x => println(x + "<--recieved raw"))
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     data.foreach(x => {
@@ -45,10 +47,20 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
     logger.debug("=========================")
 
     if (Store.graph != null) {
-      val min = GraphProcessor.min(Store.graph)
-      val max = GraphProcessor.max(Store.graph)
-      val average = GraphProcessor.average(Store.graph)
-      val shortestPath = GraphProcessor.shortestPath(Store.graph, "entry0")
+      val function = Mithai.getConfiguration.getProperty(MithaiProperties.FUNCTION_LIST)
+      function.split(",").foreach(x =>
+        if (x.trim.equals("min")) {
+          val min = GraphProcessor.min(Store.graph)
+        }
+        else if (x.trim.equals("max")) {
+          val max = GraphProcessor.max(Store.graph)
+        }
+        else if (x.trim.equals("ShortestPath")) {
+          val shortestPath = GraphProcessor.shortestPath(Store.graph, "entry0")
+        }
+        else if (x.trim.equals("average")) {
+          val average = GraphProcessor.average(Store.graph)
+        })
       //      logger.debug("Min: " + min)
       //      logger.debug("Max: " + max)
       //      logger.debug("Average: "+GraphProcessor.average(Store.graph))

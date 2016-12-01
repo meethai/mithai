@@ -28,4 +28,5 @@ public interface MithaiProperties {
     //Graph Processor Tasks
     String ENTRY = "ENTRY";
     String TASK_LIST = "TASK_LIST";
+    String FUNCTION_LIST = "FUNCTION_LIST";
 }
