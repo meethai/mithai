@@ -142,9 +142,10 @@ $(document).ready(function () {
     var stop = false;
     //TODO use cache control
     function updateIfChanged() {
+        console.log('updating graph if changed');
         var prev = JSON.stringify(data);
         getData(function () {
-            if (_.isEqual(JSON.stringify(data), prev)) {
+            if (!_.isEqual(JSON.stringify(data), prev)) {
                 $('#graph').empty();
                 updateD3();
             }
