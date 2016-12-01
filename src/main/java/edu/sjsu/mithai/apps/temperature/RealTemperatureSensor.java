@@ -13,6 +13,8 @@ public class RealTemperatureSensor implements IDevice {
 
     private static String COMMAND = "python";
     private static String ARGS = "/home/pi/mithai/src/main/resources/dht11_example.py";
+//    private static String COMMAND = "python";
+//    private static String ARGS = "/home/pi/mithai/src/main/resources/dht11_example.py";
 
     private String id;
 
