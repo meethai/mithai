@@ -5,7 +5,7 @@ import edu.sjsu.mithai.export.HttpExportMessage;
 import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.Ihandler;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ParkingResponseHandler implements Ihandler {
@@ -15,7 +15,7 @@ public class ParkingResponseHandler implements Ihandler {
 
     public ParkingResponseHandler() {
         this.gson = new Gson();
-        this.parkingStatus = new HashMap<>();
+        this.parkingStatus = new LinkedHashMap<>();
     }
 
     @Override
