@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "app": {
     "background": {
-      "scripts": ["background.js","javascripts/d3_sample.js"]
+      "scripts": ["background.js"]
     }
   },
   "icons": { "16": "fog-16.png", "128": "fog-128.png" },
