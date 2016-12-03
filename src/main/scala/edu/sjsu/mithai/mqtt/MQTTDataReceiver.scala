@@ -29,7 +29,6 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
         val data: SensorData = x.asInstanceOf[SensorData]
         val vertexId: Integer = data.getId().hashCode()
         Store.graph = Store.graph.mapVertices((id, attr) => {
-
           if (id == vertexId) {
             (data.getId, data.getValue)
           } else {
@@ -56,19 +55,11 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
           val max = GraphProcessor.max(Store.graph)
         }
         else if (x.trim.equals("ShortestPath")) {
-          val shortestPath = GraphProcessor.shortestPath(Store.graph, "entry0")
+          val shortestPath = GraphProcessor.shortestPath(Store.graph, Mithai.getConfiguration.getProperty("ENTRY"))
         }
         else if (x.trim.equals("average")) {
           val average = GraphProcessor.average(Store.graph)
         })
-      //      logger.debug("Min: " + min)
-      //      logger.debug("Max: " + max)
-      //      logger.debug("Average: "+GraphProcessor.average(Store.graph))
-      //      logger.debug("Shortest Path: " + GraphProcessor.shortestPath(Store.graph, "entry0"))
-
-      //      var gson:Gson = new Gson()
-      //      var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
-      //      Store.messageStore.addMessage(new ExportMessage(message))
     }
   })
 
