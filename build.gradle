@@ -34,16 +34,16 @@ task( real_sensor, type: JavaExec ) {
 task( temp_application, type: JavaExec ) {
     main = 'edu.sjsu.mithai.apps.temperature.TemperatureApplication'
     classpath = sourceSets.main.runtimeClasspath
-    if (project.hasProperty('tempargs')) {
-        args(myargs.split(','))
+    if (project.hasProperty('mithaiargs')) {
+        args(mithaiargs.split(','))
     }
 }
 
 task( parking_application, type: JavaExec ) {
     main = 'edu.sjsu.mithai.apps.parkinglot.ParkingApplication'
     classpath = sourceSets.main.runtimeClasspath
-    if (project.hasProperty('parkingargs')) {
-        args(myargs.split(','))
+    if (project.hasProperty('mithaiargs')) {
+        args(mithaiargs.split(','))
     }
 }
 

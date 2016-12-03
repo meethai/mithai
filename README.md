@@ -37,5 +37,5 @@ Run using ``` gradle <taskName> ``` in terminal from project root
  2. runSparkServer -> starts spark server using port,host specified in gradle.properties file
  3. jar -> build a fat jar
  4. run -> run application
- 5. temp_application '-Pmyargs=path_to_application_properties' -> run temperature application
- 6. parking_application '-Pmyargs=path_to_application_properties' -> run parking application
+ 5. temp_application '-Pmithaiargs=path_to_application_properties' -> run temperature application
+ 6. parking_application '-Pmithaiargs=path_to_application_properties' -> run parking application
