@@ -33,6 +33,23 @@ task( real_sensor, type: JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task( temp_application, type: JavaExec ) {
+    main = 'edu.sjsu.mithai.apps.temperature.TemperatureApplication'
+    classpath = sourceSets.main.runtimeClasspath
+    if (project.hasProperty('mithaiargs')) {
+        args(mithaiargs.split(','))
+    }
+}
+
+task( parking_application, type: JavaExec ) {
+    main = 'edu.sjsu.mithai.apps.parkinglot.ParkingApplication'
+    classpath = sourceSets.main.runtimeClasspath
+    if (project.hasProperty('mithaiargs')) {
+        args(mithaiargs.split(','))
+    }
+}
+
+
 repositories {
     mavenCentral()
 }

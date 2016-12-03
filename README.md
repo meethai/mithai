@@ -33,7 +33,9 @@ Mithai provided end-to-end framework to generate data, stream it within cluster 
 ## List of gradle tasks
 
 Run using ``` gradle <taskName> ``` in terminal from project root
- 1. startMosquitto - starts teh Mosquitto server using the config in the resources directory
- 2. runSparkServer - starts spark server using port,host specified in gradle.properties file
- 3. jar - build a fat jar
- 4. run - run application
+ 1. startMosquitto -> starts teh Mosquitto server using the config in the resources directory
+ 2. runSparkServer -> starts spark server using port,host specified in gradle.properties file
+ 3. jar -> build a fat jar
+ 4. run -> run application
+ 5. temp_application '-Pmithaiargs=path_to_application_properties' -> run temperature application
+ 6. parking_application '-Pmithaiargs=path_to_application_properties' -> run parking application
