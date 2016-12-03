@@ -16,6 +16,8 @@ apply plugin: "com.commercehub.gradle.plugin.avro"
 apply plugin: 'application'
 
 mainClassName = "edu.sjsu.mithai.main.Mithai"
+applicationDefaultJvmArgs = ["-Xms512m"]
+
 compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
