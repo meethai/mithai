@@ -51,7 +51,7 @@ class MQTTDataReceiver[D <: Serializable : ClassTag](val brokerUrl: String, val 
           val max = GraphProcessor.max(Store.graph)
         }
         else if (x.trim.equals("ShortestPath")) {
-          val shortestPath = GraphProcessor.shortestPath(Store.graph, "entry0")
+          val shortestPath = GraphProcessor.shortestPath(Store.graph, Mithai.getConfiguration.getProperty("ENTRY"))
         }
         else if (x.trim.equals("average")) {
           val average = GraphProcessor.average(Store.graph)

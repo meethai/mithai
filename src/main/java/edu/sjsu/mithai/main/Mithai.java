@@ -97,7 +97,8 @@ public class Mithai implements Observer {
         }
 
         // Start Streaming context
-        Thread.sleep(15 * 1000);
+
+        Thread.sleep(Long.parseLong(configuration.getProperty(MithaiProperties.STARTUP_THRESHOLD)) * 1000);
         if (receiverTask) {
             SparkStreamingObject.streamingContext().start();
         }

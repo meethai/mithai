@@ -1,8 +1,10 @@
 package edu.sjsu.mithai.spark
 
 import edu.sjsu.mithai.data.SensorData
+import edu.sjsu.mithai.config.MithaiProperties
 import edu.sjsu.mithai.export.{ExportMessage, HttpExportMessage, MessageStore}
 import edu.sjsu.mithai.mqtt.MQTTDataReceiver
+import edu.sjsu.mithai.main.Mithai
 import org.apache.spark.graphx.{Graph, GraphXUtils, PartitionID}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.mqtt.MQTTUtils
@@ -32,8 +34,7 @@ object SparkStreamingObject{
     classOf[SensorData],
     classOf[MQTTDataReceiver[_]]
   ))
-
-  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
+  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(Mithai.getConfiguration.getProperty(MithaiProperties.SPARKCONTEXT_INTERVAL).toInt))
   val sparkContext: SparkContext = streamingContext.sparkContext
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,
@@ -43,8 +44,8 @@ object SparkStreamingObject{
 }
 
 object Store {
-  var httpMessageStore = new MessageStore[HttpExportMessage](10)
-  var messageStore = new MessageStore[ExportMessage](10)
-  var mqttMessageStore = new MessageStore[(String, String)](100)
+  var httpMessageStore = new MessageStore[HttpExportMessage](Mithai.getConfiguration.getProperty(MithaiProperties.MESSAGE_STORE_QUEUE_SIZE).toInt)
+  var messageStore = new MessageStore[ExportMessage](Mithai.getConfiguration.getProperty(MithaiProperties.MESSAGE_STORE_QUEUE_SIZE).toInt)
+  var mqttMessageStore = new MessageStore[(String, String)](Mithai.getConfiguration.getProperty(MithaiProperties.MQTT_MESSAGE_STORE_QUEUE_SIZE).toInt)
   var graph: Graph[(String, Double), PartitionID] = _
 }
