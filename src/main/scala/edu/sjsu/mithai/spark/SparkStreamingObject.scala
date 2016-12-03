@@ -1,7 +1,9 @@
 package edu.sjsu.mithai.spark
 
+import edu.sjsu.mithai.data.SensorData
 import edu.sjsu.mithai.config.MithaiProperties
 import edu.sjsu.mithai.export.{ExportMessage, HttpExportMessage, MessageStore}
+import edu.sjsu.mithai.mqtt.MQTTDataReceiver
 import edu.sjsu.mithai.main.Mithai
 import org.apache.spark.graphx.{Graph, GraphXUtils, PartitionID}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
@@ -24,11 +26,16 @@ object SparkStreamingObject{
   GraphXUtils.registerKryoClasses(sparkConf)
 
   //TODO: add registration method for custom classes
-  sparkConf.registerKryoClasses(Array(classOf[org.apache.avro.generic.GenericData.Record],
-    classOf[org.apache.avro.generic.GenericRecord],classOf[edu.sjsu.mithai.data.AvroGraphMetadata], classOf[Object]))
-  val sparkContext: SparkContext = streamingContext.sparkContext
+  sparkConf.registerKryoClasses(Array(
+    classOf[org.apache.avro.generic.GenericData.Record],
+    classOf[org.apache.avro.generic.GenericRecord],
+    classOf[edu.sjsu.mithai.data.AvroGraphMetadata],
+    classOf[Object],
+    classOf[SensorData],
+    classOf[MQTTDataReceiver[_]]
+  ))
   var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(Mithai.getConfiguration.getProperty(MithaiProperties.SPARKCONTEXT_INTERVAL).toInt))
-
+  val sparkContext: SparkContext = streamingContext.sparkContext
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,
                 topic: String,

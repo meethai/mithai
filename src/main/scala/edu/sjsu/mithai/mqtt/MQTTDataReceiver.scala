@@ -1,5 +1,6 @@
 package edu.sjsu.mithai.mqtt
 
+import java.io.Serializable
 import edu.sjsu.mithai.config.MithaiProperties
 import edu.sjsu.mithai.data._
 import edu.sjsu.mithai.graphX.GraphProcessor
@@ -9,7 +10,7 @@ import org.apache.log4j.{Level, Logger}
 
 import scala.reflect.ClassTag
 
-class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
+class MQTTDataReceiver[D <: Serializable : ClassTag](val brokerUrl: String, val topic: String) {
 
   private val logger: Logger = Logger.getLogger(MQTTDataReceiver.this.getClass)
   Logger.getLogger("org").setLevel(Level.ERROR)
@@ -19,31 +20,26 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
   private var _serializationHelper: SerializationHelper[D] = _
   private var data: List[D] = _
 
-  stream.foreachRDD(foreachFunc = r => {
-    r.collect().toList.foreach(x => println(x + "<--recieved raw"))
+  stream.foreachRDD(r => {
     data = r.collect().toList.map(_serializationHelper.deserialize(_))
     data.foreach(x => {
       //Assign Data to Graph Vertices.
-
       if (Store.graph != null) {
-        val data: SensorData = x.asInstanceOf[SensorData]
-        val vertexId: Integer = data.getId().hashCode()
-        Store.graph = Store.graph.mapVertices((id, attr) => {
-          if (id == vertexId) {
-            (data.getId, data.getValue)
-          } else {
-            attr
-          }
+        val d: SensorData = x.asInstanceOf[SensorData]
+        val vId: Integer = d.getId().hashCode()
+        Store.graph.vertices.filter { case (id, attr) => id == vId }.mapValues((s, v) => {
+          (s, d.getValue)
         })
+
       }
     })
 
-    logger.debug("==========Graph==========")
-    if (Store.graph != null) {
-      Store.graph.vertices.collect().foreach(logger.debug)
-      Store.graph.edges.collect().foreach(logger.debug)
-    }
-    logger.debug("=========================")
+    //    logger.debug("==========Graph==========")
+    //    if (Store.graph != null) {
+    //      Store.graph.vertices.collect().foreach(logger.debug)
+    //      Store.graph.edges.collect().foreach(logger.debug)
+    //    }
+    //    logger.debug("=========================")
 
     if (Store.graph != null) {
       val function = Mithai.getConfiguration.getProperty(MithaiProperties.FUNCTION_LIST)
@@ -60,6 +56,14 @@ class MQTTDataReceiver[D: ClassTag](val brokerUrl: String, val topic: String) {
         else if (x.trim.equals("average")) {
           val average = GraphProcessor.average(Store.graph)
         })
+      //      logger.debug("Min: " + min)
+      //      logger.debug("Max: " + max)
+      //      logger.debug("Average: "+GraphProcessor.average(Store.graph))
+      //      logger.debug("Shortest Path: " + GraphProcessor.shortestPath(Store.graph, "entry0"))
+
+      //      var gson:Gson = new Gson()
+      //      var message = gson.toJson(new DataTuple(min._2._1, min._2._2))
+      //      Store.messageStore.addMessage(new ExportMessage(message))
     }
   })
 
