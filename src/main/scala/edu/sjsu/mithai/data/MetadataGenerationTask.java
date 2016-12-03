@@ -14,12 +14,12 @@ import java.util.List;
 
 public class MetadataGenerationTask extends StoppableExecutableTask {
     private static final String TOPIC = "metadata";
-    private static final int RESEND_COUNT = 9;
     private final Gson gson;
     private Configuration configuration;
     private MQTTPublisher publisher;
     private int sendCount;
     private AvroMetadataSerializationHelper avro;
+
 
     public MetadataGenerationTask(Configuration configuration) {
         this.configuration = configuration;
@@ -31,7 +31,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
     @Override
     public void execute() {
 
-        if (++sendCount >= RESEND_COUNT) {
+        if (++sendCount >= Integer.parseInt(configuration.getProperty(MithaiProperties.RESEND_COUNT))) {
             stop();
         }
 
@@ -77,7 +77,7 @@ public class MetadataGenerationTask extends StoppableExecutableTask {
         }
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(Long.parseLong(configuration.getProperty(MithaiProperties.META_DATA_GENERATION_INTERVAL)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

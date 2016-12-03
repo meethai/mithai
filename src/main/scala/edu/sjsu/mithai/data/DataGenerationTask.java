@@ -69,7 +69,7 @@ public class DataGenerationTask extends StoppableExecutableTask {
 
         if (publisher.client().isConnected()) {
             try {
-                publisher.client().disconnect(1000);
+                publisher.client().disconnect(Long.parseLong(configuration.getProperty(MithaiProperties.QUIESCE_TIMEOUT)));
                 publisher.client().close();
             } catch (MqttException e) {
                 e.printStackTrace();
