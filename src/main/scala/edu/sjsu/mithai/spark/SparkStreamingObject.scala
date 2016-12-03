@@ -1,6 +1,8 @@
 package edu.sjsu.mithai.spark
 
+import edu.sjsu.mithai.data.SensorData
 import edu.sjsu.mithai.export.{ExportMessage, HttpExportMessage, MessageStore}
+import edu.sjsu.mithai.mqtt.MQTTDataReceiver
 import org.apache.spark.graphx.{Graph, GraphXUtils, PartitionID}
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 import org.apache.spark.streaming.mqtt.MQTTUtils
@@ -22,11 +24,16 @@ object SparkStreamingObject{
   GraphXUtils.registerKryoClasses(sparkConf)
 
   //TODO: add registration method for custom classes
-  sparkConf.registerKryoClasses(Array(classOf[org.apache.avro.generic.GenericData.Record],
-    classOf[org.apache.avro.generic.GenericRecord],classOf[edu.sjsu.mithai.data.AvroGraphMetadata], classOf[Object]))
-
-  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
+  sparkConf.registerKryoClasses(Array(
+    classOf[org.apache.avro.generic.GenericData.Record],
+    classOf[org.apache.avro.generic.GenericRecord],
+    classOf[edu.sjsu.mithai.data.AvroGraphMetadata],
+    classOf[Object],
+    classOf[SensorData],
+    classOf[MQTTDataReceiver[_]]
+  ))
   val sparkContext: SparkContext = streamingContext.sparkContext
+  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
 
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,
