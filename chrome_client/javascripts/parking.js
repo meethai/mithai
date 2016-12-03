@@ -3,26 +3,42 @@
  */
 
 $(document).ready(function () {
-    // var x = 8;
-    // var container = $('#row1');
-    //
-    // for (i = 0; i < x; i++) {
-    //     // container.append($(
-    //         // '<div class="col-sm-1 spot-wrapper">' +
-    //         //     '<div class="spot ver col-sm-1 spot-wrapper"></div>'
-    //             // +
-    //             // '<div class="line"></div>' +
-    //         // '</div>'
-    //         // ));
-    //
-    // }
-    // var container2 = $('#row2');
-    // for (i = 0; i < x; i++) {
-    //     // container2.append($('<div class="spot ver col-sm-1 spot-wrapper green"></div>'));
-    // }
-
     $(".spot").on('click', function (e) {
         $(e.target).toggleClass("green");
     });
+    var spots;
+
+    function getSpots(func) {
+        $.get("http://localhost:3000/lots/allspots", function (d, s) {
+            console.log("Status: " + s);
+            spots = JSON.parse(d);
+            func();
+        });
+    }
+
+    var stop = false;
+    //TODO use cache control
+    function updateSpotsIfChanged() {
+        console.log('updating spots if changed');
+        var prev = JSON.stringify(spots);
+        getSpots(function () {
+            if (!_.isEqual(JSON.stringify(spots), prev)) {
+                console.log(spots);
+                $('#parking .spot').each(function (i, e) {
+                    console.log($(this).attr('id'));
+                    if (spots[$(this).attr('id')] > 0)
+                        $('#' + $(this).attr('id')).addClass('green');
+                    else
+                        $('#' + $(this).attr('id')).removeClass('green');
+                });
+            }
+        });
+
+        setTimeout(function () {
+            if (!stop) updateSpotsIfChanged();
+        }, 30000);
+    }
+
+    updateSpotsIfChanged();
 
 });

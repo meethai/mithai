@@ -48,6 +48,6 @@ public class TemperatureApplication extends Mithai {
 
     @Override
     protected synchronized void setupHandlers() {
-        TaskManager.getInstance().addHandler(new ParkingResponseHandler());
+        TaskManager.getInstance().addHandler(new TemperatureHandler());
     }
 }
