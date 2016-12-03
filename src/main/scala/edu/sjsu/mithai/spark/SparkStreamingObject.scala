@@ -32,9 +32,9 @@ object SparkStreamingObject{
     classOf[SensorData],
     classOf[MQTTDataReceiver[_]]
   ))
-  val sparkContext: SparkContext = streamingContext.sparkContext
-  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
 
+  var streamingContext: StreamingContext = new StreamingContext(sparkConf, Seconds(10))
+  val sparkContext: SparkContext = streamingContext.sparkContext
   //  streamingContext.awaitTermination();
   def getStream(brokerUrl: String,
                 topic: String,
