@@ -29,6 +29,10 @@ public interface MithaiProperties {
     String EXPORTER_KAFKA_TOPIC = "EXPORTER_KAFKA_TOPIC";
     String EXPORTER_TIME_INTERVAL = "EXPORTER_TIME_INTERVAL";
 
+    // Graphite exporter properties
+    String GRAPHITE_HOSTNAME = "GRAPHITE_HOSTNAME";
+    String GRAPHITE_PORT = "GRAPHITE_PORT";
+
     //Graph Processor Tasks
     String ENTRY = "ENTRY";
     String TASK_LIST = "TASK_LIST";

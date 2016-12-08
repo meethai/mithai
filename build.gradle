@@ -155,6 +155,8 @@ dependencies {
     compile group: 'org.apache.avro', name: 'avro', version: '1.8.1'
     // https://mvnrepository.com/artifact/org.apache.avro/avro-compiler
     compile group: 'org.apache.avro', name: 'avro-compiler', version: '1.8.1'
+    // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-graphite
+    compile group: 'io.dropwizard.metrics', name: 'metrics-graphite', version: '3.1.2'
 
 }
 

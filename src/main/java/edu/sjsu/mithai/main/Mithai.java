@@ -6,12 +6,14 @@ import edu.sjsu.mithai.config.MithaiProperties;
 import edu.sjsu.mithai.data.DataGenerationTask;
 import edu.sjsu.mithai.data.MetadataGenerationTask;
 import edu.sjsu.mithai.data.SensorStore;
+import edu.sjsu.mithai.export.ExporterTask;
 import edu.sjsu.mithai.export.HttpExporterTask;
 import edu.sjsu.mithai.mqtt.MQTTDataReceiverTask;
 import edu.sjsu.mithai.mqtt.MQTTMetaDataRecieverTask;
 import edu.sjsu.mithai.mqtt.MQTTPublisherTask;
 import edu.sjsu.mithai.sensors.TemperatureSensor;
 import edu.sjsu.mithai.spark.SparkStreamingObject;
+import edu.sjsu.mithai.spark.Store;
 import edu.sjsu.mithai.util.TaskManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -93,7 +95,7 @@ public class Mithai implements Observer {
         TaskManager.getInstance().submitTask(new HttpExporterTask(configuration));
 
         if (!configuration.getProperty(EXPORTER_TYPE).equals("HTTP")) {
-//            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
+            TaskManager.getInstance().submitTask(new ExporterTask(configuration, Store.messageStore()));
         }
 
         // Start Streaming context
