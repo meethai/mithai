@@ -27,10 +27,17 @@ class MQTTDataReceiver[D <: Serializable : ClassTag](val brokerUrl: String, val 
       if (Store.graph != null) {
         val d: SensorData = x.asInstanceOf[SensorData]
         val vId: Integer = d.getId().hashCode()
-        Store.graph.vertices.filter { case (id, attr) => id == vId }.mapValues((s, v) => {
-          (s, d.getValue)
-        })
+        //        Store.graph.vertices.filter { case (id, attr) => id == vId }.mapValues((s, v) => {
+        //          (s, d.getValue)
+        //        })
+        Store.graph = Store.graph.mapVertices((id, attr) => {
 
+          if (id == vId) {
+            (d.getId, d.getValue)
+          } else {
+            attr
+          }
+        })
       }
     })
 
