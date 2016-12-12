@@ -137,7 +137,7 @@ body {
 
 #lot {
     height: 100%;
-    width: 80%;
+    width: 40%;
     float: left;
     background-color: #333;
     border-radius: 5px;
@@ -181,4 +181,8 @@ body {
     margin: 5px;
     overflow: hidden;
 
+}
+
+.car {
+    height: 70%;
 }

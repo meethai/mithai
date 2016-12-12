@@ -3,9 +3,10 @@
  */
 
 $(document).ready(function () {
-    $(".spot").on('click', function (e) {
-        $(e.target).toggleClass("green");
-    });
+    // $(".spot").on('click', function (e) {
+    //     $(e.target).toggleClass("green");
+    //     $(e.target).append('<img src="images/car.png" class = "car"/>')
+    // });
     var spots;
 
     function getSpots(func) {
@@ -26,10 +27,14 @@ $(document).ready(function () {
                 console.log(spots);
                 $('#parking .spot').each(function (i, e) {
                     console.log($(this).attr('id'));
-                    if (spots[$(this).attr('id')] > 0)
+                    if (spots[$(this).attr('id')] > 0) {
                         $('#' + $(this).attr('id')).addClass('green');
-                    else
+                        $('#' + $(this).attr('id')).append('<img src="images/car.png" class = "car"/>');
+                    }
+                    else {
                         $('#' + $(this).attr('id')).removeClass('green');
+                        $('#' + $(this).attr('id') + ' .car').remove();
+                    }
                 });
             }
         });
